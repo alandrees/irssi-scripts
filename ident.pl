@@ -16,10 +16,7 @@ $VERSION = '0.75';
 );
 
 #format: network name, [username, auth service name, password]
-%authorizations = (piratenet => ["Pie_Mage", "SickleNick", "sonicthehedgehog"],
-		   voxinfinitus =>   ["Pie_Mage","NickServ","superduper"],
-		   freenode =>  ["Pie_Mage","NickServ","superduper"],
-                   oftc =>      ["Pie_Mage","NickServ","superduper"]);
+%authorizations = (freenode =>  ["username","servicename","password"]);
 		   
 sub identificator{
     my ($data, $server) = @_;

@@ -5,13 +5,13 @@ use Irssi qw(command_bind signal_add);
 
 #use IO::File;
 
-$VERSION = '0.02';
+$VERSION = '0.50';
 %IRSSI = (
-        authors         => 'Deepmagic',
-        contact         => 'deepie@dm',
+        authors         => 'Alan Drees',
+        contact         => 'alandrees@theselves.com',
         name            => 'IP resolving',
         description     => 'IP Resolving for DNS names',
-        license         => 'WEE',
+        license         => 'GPLv3',
 );
 
 sub resolve{
