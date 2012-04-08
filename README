@@ -6,24 +6,17 @@ ut.pl - Outputs the uptime of the system it is running on.  Retrieved from /proc
 tt.pl - Various text triggers for some ascii character (Look of Disapproval, tableflip, etc.)
 sr.pl - Size report.  Lists in IRC the output of df -h.  Will make it a bit more modular soon enough.
 sd.pl - Self Defence.  Stops the violence.
-rt.pl - rTorrent upload/download speeds.  The helper script rtorrent-rate.sh handles the heavy lifting, 
-      	and the xmlrpc2sgci.2.py handles all the backend.
+rt.pl - rTorrent upload/download speeds.  The helper script rtorrent-rate.sh handles the heavy lifting,	and the xmlrpc2sgci.2.py handles all the backend.
 io.pl - iostat output in IRC
 ap.pl - advanced self defence.
-np.pl - Allows for displaying of the current track playing in an mpd player.  Allows for either display
-      	in the current window (/np) or a list of windows for it to be sent to (/npr).  A helper script
-	is included to demonstrate how it can be triggered remotely using screen and ssh.
+np.pl - Allows for displaying of the current track playing in an mpd player.  Allows for either display	in the current window (/np) or a list of windows for it to be sent to (/npr).  A helper script is included to demonstrate how it can be triggered remotely using screen and ssh.
 misc.pl - Various useful commands.  In this case, just /lod (outputs the Look of Disapproval)
-ident.pl - Does multi-server identification, with different usernames and authorization mechanisms.
-	   automatic grouping and ungrouping is not working atm.  Might be in the future, might not be.
-di.pl - Dice script. Space delimited list of options, randomly chooses between them.  For those who have too
-      	much on the go and cannot decide on something to do...
-tf.pl - When things get hairy, and tables get flipped, someone needs to keep order and peace.  Install this
-        script to have someone take care of cleaning up automatically.
+ident.pl - Does multi-server identification, with different usernames and authorization mechanisms. Automatic grouping and ungrouping is not working atm.  Might be in the future, might not be.
+di.pl - Dice script. Space delimited list of options, randomly chooses between them.  For those who have too much on the go and cannot decide on something to do...
+tf.pl - When things get hairy, and tables get flipped, someone needs to keep order and peace.  Install this script to have someone take care of cleaning up automatically.
 net.pl - Current network IO.
 hlp.pl - Help.  Provides help on the installed commands.  Sorta useless atm.
-ul.pl - URL lookup and shortening.  There are many like it, but this one is my own.  You can PM if you 
-        just want a shortened URL.
+ul.pl - URL lookup and shortening.  There are many like it, but this one is my own.  You can PM if you just want a shortened URL.
 
 /helpers/mpd_np - handles the screen registers stuff required for remote triggering of /np
 /helpers/rtorrent-rate.sh - gets the upload or download rate of an rtorrent instance
