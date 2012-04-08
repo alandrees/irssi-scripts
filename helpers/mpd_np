@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+screen -X register 1 "/npr #sickle"
+screen -X paste 1
+
