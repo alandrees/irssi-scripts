@@ -16,7 +16,7 @@ $VERSION = '0.75';
 );
 
 #format: network name => [username, auth service name, password]
-%authorizations = (freenode =>  ["username","servicename","password"]);
+%authorizations = ('netname' =>  ["username","servicename","password"]);
 		   
 sub identificator{
     my ($data, $server) = @_;

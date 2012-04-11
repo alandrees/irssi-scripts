@@ -11,29 +11,18 @@ $VERSION = '0.50';
         description     => 'Output Current Network I/O',
         license         => 'GPLv3',
     );
+
+#this code looks like a mess to me... I want to refactor it.
+
 sub net_stat{
     my($server, $msg, $nick, $address, $target) = @_;
     my($response, $silence_target);
-    my(@arguments,@sil, @futurama);
-
-    #first lets parse the msg into it's command and arguments
 
     my @arguments = split(' ',$msg);
     
-    #read the silence
-    $silence_target = $target;
-    open(SILENCE, "/home/deepie/.irssi/silence.dat") || return;
-    @sil = <SILENCE>;
-    close(SILENCE);
-
-    if($sil[0] ne "0"){
-	$silence_target = $nick;
-    }
-
-
     if(lc($arguments[0]) eq '!net'){
-	if($arguments[1] eq 'eth0'){
-	    $response = readpipe("ifstat -i eth0 -b 1 1 | grep [0-9]*\.[0-9][0-9] | sed 's/^[ \t]*/Rx: /' | sed 's/ [ \t]*/ Tx: /2'");
+	if(exists($arguments[1])){
+	    $response = readpipe("ifstat -i".$arguments."-b 1 1 | grep [0-9]*\.[0-9][0-9] | sed 's/^[ \t]*/Rx: /' | sed 's/ [ \t]*/ Tx: /2'");
 	}elsif($arguments[1] eq 'eth1'){
 	    $response = readpipe("ifstat -i eth1 -b 1 1 | grep [0-9]*\.[0-9][0-9] | sed 's/^[ \t]*/Rx: /' | sed 's/ [ \t]*/ Tx: /2'");
 	}else{

@@ -15,8 +15,6 @@ $VERSION = '1.00';
 sub self_defence{
         my ($server, $msg, $nick, $address, $target) = @_;
 
-#	Irssi::print(length($msg));
-
         if($msg=~ m/┻(━)*┻/x){
 	    
 	    my $tabletop = "";
@@ -24,9 +22,6 @@ sub self_defence{
 		use utf8;
 		Irssi::print($msg = /━/);
 	    }
-
-#	    Irssi::print($count);
-	    
 
 	    $server->command('msg '.$target.' ┬'. $tabletop . '┬ノ( º _ ºノ)');
         }

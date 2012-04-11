@@ -12,8 +12,8 @@ $VERSION = '1.00';
 	license		=> 'GPLv3',
 );
 
+#quick and easy look of disapproval command.
 sub lod{
-    #output the look of disapproval
     my ($data, $server, $witem) = @_;
     
     if($witem->{type} eq "CHANNEL" || $witem->{type} eq "QUERY"){

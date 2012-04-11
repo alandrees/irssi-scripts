@@ -3,8 +3,6 @@ use vars qw($VERSION %IRSSI);
 
 use Irssi qw(command_bind signal_add);
 
-#use IO::File;
-
 $VERSION = '0.50';
 %IRSSI = (
         authors         => 'Alan Drees',
@@ -21,11 +19,9 @@ sub resolve{
     my @arguments = split(' ', $msg);
 
     if(lc($arguments[0]) eq '!ip'){
-
-      $response = readpipe('host -t A '.$arguments[1].' | sed \'s/'.$arguments[1].' has address //\'');
-      #Irssi:print($response);
-      #Irssi:print($arguments[1]);
-      $server->command('MSG '.$target.' '.''.$arguments[1].":4 ".$response);
+	
+	$response = readpipe('host -t A '.$arguments[1].' | sed \'s/'.$arguments[1].' has address //\'');
+	$server->command('MSG '.$target.' '.''.$arguments[1].":4 ".$response);
     }
 }
 
