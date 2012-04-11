@@ -1,6 +1,5 @@
 use strict;
-use vars qw($VERSION %IRSSI);
-use Filesys::Df;
+use vars qw($VERSION %IRSSI %ALIASES);
 use Irssi qw(command_bind signal_add);
 
 $VERSION = '1.00';
@@ -9,59 +8,72 @@ $VERSION = '1.00';
         contact         => 'alandrees@theselves.com',
         name            => 'sizereport',
         description     => 'Reports current storage system statistics (free/total)',
-        license         => 'free to use, free to destroy',
+        license         => 'GPLv3',
     );
+
+#it will use the keys here to create a list of mount points to add to the sizereport
+
+#mountpoint => (list of ailiases)
+%ALIASES = ( '/media/movies' => ['movies','sdb1'],
+	     '/media/video' => ['video','sdc1'],
+	     '/media/production' => ['production','sdd1'],
+	     '/media/data' => ['data','backups','sdd2'],
+	     '/media/vms' => ['vms','sde1'],
+	     '/media/rtorrent' => ['rtorrent','sde2'],
+	     '/media/musique' => ['musique','music','sdf1']);
 
 sub sizereport{
     my($server, $msg, $nick, $address, $target) = @_;
-    my($response, $silence_target);
+    my($response, $path_list);
 
+    $path_list = '';
     my @arguments = split(' ',$msg);
 
-    my @sil;
-
-    my($totalsize,$remaining, $used, $size_string);
-
-    #read the silence
-    #$silence_target = $target;
-    #open(SILENCE, "/home/deepie/.irssi/silence.dat") || return;
-    #@sil = <SILENCE>;
-    #close(SILENCE);
-
-    #if($sil[0] ne "0"){
-    #    $silence_target = $nick;
-    #}
-    
     if(lc($arguments[0]) eq '!sizereport'){
 
 	if($arguments[1] ne ''){
-
-	    #pre-parse the drive sent if it's
-	    if(lc($arguments[1]) eq 'musique' || lc($arguments[1]) eq 'sdb1'){
-		$arguments[1] = '/dev/sdb1';
-	    }elsif (lc($arguments[1]) eq 'production' || lc($arguments[1]) eq 'sdf1'){
-		$arguments[1] = '/dev/sdf1';
-	    }elsif (lc($arguments[1]) eq 'data' || lc($arguments[1]) eq 'sdf2'){
-		$arguments[1] = '/dev/sdf2';
-	    }elsif (lc($arguments[1]) eq 'movies' || lc($arguments[1]) eq 'sdd1'){
-		$arguments[1] = '/dev/sdd1';
-	    }elsif (lc($arguments[1]) eq 'video' || lc($arguments[1]) eq 'sde1'){
-		$arguments[1] = '/dev/sde1';
-	    }elsif (lc($arguments[1]) eq 'working' || lc($arguments[1]) eq 'sdc1'){
-                $arguments[1] = '/dev/sdc1';
+	    foreach(my @mps = @arguments[1 .. (scalar(@arguments) - 1)]){
+		my $argument = $_;
+		while ( my ($key, $value) = each (%ALIASES) ){
+		    if($argument eq $key){
+			if(index($path_list, $key) == -1){
+			    $path_list .= $key . " ";
+			    last;
+			}else{
+			    last;
+			}
+		    }else{
+			foreach(@{$value}){
+			    if($argument eq $_){
+				if(index($path_list, $key) == -1){
+				    $path_list .= $key . " ";
+				}else{
+				    last;
+				}
+			    }
+			}
+		    }
+		}
 	    }
+	}else{
+	    my @temp_keys = keys(%ALIASES);
+	    
+	    foreach(@temp_keys){
 
+		$path_list .= $_ . " ";
+	    }
 	}
 
-	$response = readpipe("df -h ".$arguments[1]."| grep '/dev/sd' |  sed \'s/Filesystem            Size  Used Avail Use% Mounted on//\' | sed \'s/            / /' | sed 's/\\/dev\\/sd/\\n\\/dev\\/sd/' | grep -v /dev/sda1");
+	Irssi::print($path_list);
 
-	$response = readpipe("df -h /media/rtorrent /media/video /media/movies /media/musique /media/data /media/production /media/vms --total");
+	if($path_list ne ""){
+	    $response = readpipe("df -h ".$path_list."--total");
 
+	    my @lines = split(/\n/,$response);
 
-     	my @lines = split(/\n/,$response);
-
-	foreach(@lines){
-	    $server->command('MSG '.$silence_target.' '.$_);
+	    foreach(@lines){
+		$server->command('MSG '.$target.' '.$_);
+	    }
 	}
 	
     }

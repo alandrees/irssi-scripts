@@ -1,0 +1,59 @@
+use strict;
+use vars qw($VERSION %IRSSI %ALIASES);
+
+use Irssi qw(command_bind signal_add);
+
+$VERSION = '1.00';
+%IRSSI = (
+        authors         => 'Alan Drees',
+        contact         => 'alandrees@theselves.com',
+        name            => 'sizereport',
+        description     => 'Reports current storage system statistics (free/total)',
+        license         => 'GPLv3',
+    );
+
+#it will use the keys here to create a list of mount points to add to the sizereport
+
+#mountpoint => (list of ailiases)
+%ALIASES = ( '/media/movies' => ('movies','sdb1'),
+	     '/media/video' => ('video','sdc1'),
+	     '/media/production' => ('production','sdd1'),
+	     '/media/data' => ('data','backups','sdd2'),
+	     '/media/vms' => ('vms','sde1'),
+	     '/media/rtorrent' => ('rtorrent','sde2'),
+	     '/media/musique' => ('musique','music','sdf1'));
+
+sub sizereport{
+    my($server, $msg, $nick, $address, $target) = @_;
+    my($response, $cl);
+
+    my @arguments = split(' ',$msg);
+
+    $cl
+
+    if(lc($arguments[0]) eq '!sizereport'){
+
+	if($arguemnts[1] ne ''){
+	    while ( my ($key, $value) = each (%hash) ){
+		for(my $alias = each($value)){
+		  
+		}
+	    }
+	}else{
+	    my $temp_keys = keys(%ALIASES)
+		
+		
+		
+	$response = readpipe("df -h /media/rtorrent /media/video /media/movies /media/musique /media/data /media/production /media/vms --total");
+
+
+     	my @lines = split(/\n/,$response);
+
+	foreach(@lines){
+	    $server->command('MSG '.$target.' '.$_);
+	}
+	
+    }
+}
+      	
+signal_add("message public", "sizereport");

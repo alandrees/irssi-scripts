@@ -15,7 +15,7 @@ $VERSION = '0.75';
 	license		=> 'GPLv3',
 );
 
-#format: network name, [username, auth service name, password]
+#format: network name => [username, auth service name, password]
 %authorizations = (freenode =>  ["username","servicename","password"]);
 		   
 sub identificator{
