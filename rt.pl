@@ -12,6 +12,10 @@ $VERSION = '1.00';
         license         => 'GPLv3',
 );
 
+
+#set this to the location of the rtorrent-rate.sh script
+$SCRIPT_DIR = "~/.scripts/";
+
 sub rtorrent{
     my($server, $msg, $nick, $address, $target) = @_;
     my($response, $dl, $ul);
@@ -19,8 +23,8 @@ sub rtorrent{
     my @arguments = split(' ',$msg);
     
     if(lc($arguments[0]) eq '!rtorrent'){
-	$dl = readpipe("~/scripts/rtorrent-rate.sh download_rate");
-	$ul = readpipe("~/scripts/rtorrent-rate.sh upload_rate");   
+	$dl = readpipe($SCRIPT_DIR."rtorrent-rate.sh download_rate");
+	$ul = readpipe($SCRIPT_DIR."rtorrent-rate.sh upload_rate");   
     	$server->command("MSG ".$target." Upload: ".$ul." "."Download: ".$dl); 
     }
 }
