@@ -15,6 +15,12 @@ use POSIX qw(strftime);
 
 use threads;
 
+###########################
+####TODO:
+####     sprintf all the db queries
+####     add the other db search command line options
+##########################
+
 $VERSION = '1.00';
 %IRSSI = (
         authors         => 'Alan Drees',
@@ -58,7 +64,7 @@ sub shorten{
 	    }
 	    
 	    $server->command("MSG ".$target." ".$js->{id}.$info);
-	    log_url($data, $nick);
+	    log_url($data, $nick, lc($target));
 
         }
         else{   
@@ -87,7 +93,7 @@ sub trigger_title{
 		    $server->command("MSG ".$target." ".$response);
 		    $lasttitle = $title;
 		}
-		log_url($token, $nick);
+		log_url($token, $nick, lc($target));
       	    }
 	}
     }
@@ -206,13 +212,13 @@ sub googl{
 }
 
 sub log_url{
-    my($url, $nick) = @_;
+    my($url, $nick, $channel) = @_;
     my $db = DBI->connect("dbi:SQLite:dbname=url.db","","");
-    
     $db->quote($url);
     $db->quote($nick);
+    $db->quote($channel);
     
-    my $query = "INSERT INTO urlist (`url`,`nick`,`date`) VALUES('".$url."','".$nick."',strftime('%s'));";
+    my $query = "INSERT INTO urlist (`url`,`nick`,`date`,`channel`) VALUES('".$url."','".$nick."',strftime('%s'),'".$channel."');";
     Irssi::print($query);
     my $qh = $db->prepare($query);
 
@@ -225,7 +231,7 @@ sub setup_db{
     my($data, $server, $witem) = @_;
     my $db = DBI->connect( "dbi:SQLite:dbname=url.db" ,"" ,"");
     
-    $db->do("CREATE TABLE urlist (id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT, nick TEXT,  date INTEGER);");
+    $db->do("CREATE TABLE urlist (id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT, nick TEXT, date INTEGER, channel TEXT);");
     $db->disconnect();
     Irssi::print("Database Created");
 }
@@ -238,12 +244,12 @@ sub trigger_history{
     my @urllist;
     if($arguments[0] eq '!url'){
 	if(length(@arguments) == 1){
-	    my %query = ('query' => 'select * from urlist order by id desc limit 10;',);
+	    my %query = ('query' => "select * from `urlist` where `channel` = '".$target."' order by id desc limit 10;");
+
 	    @urllist = get_url_list(%query);
 	    
-
-	    if ( (scalar(@urllist) % 4) == 0){
-		while( my ($did, $durl, $dnick, $ddate) = splice(@urllist,0,4)){
+	    if ( (scalar(@urllist) % 5) == 0){
+		while( my ($did, $durl, $dnick, $ddate, $channel) = splice(@urllist,0,5)){
 		    $server->command("MSG " . $nick . " " . googl($durl) ." - " . title($durl,1) ." linked by  6". $dnick ." on ". strftime "%e/%m/%Y %T", gmtime($ddate));
 		}
 	    }
@@ -271,7 +277,7 @@ sub trigger_history{
 sub get_url_list{
     my(%options) = @_;
     
-    my $db = DBI->connect( "dbi:SQLite:dbname=url.db", "","",{ RaiseError => 0, AutoCommit => 1});
+    my $db = DBI->connect( "dbi:SQLite:dbname=url.db", "","",{ RaiseError => 1, AutoCommit => 1});
     
     my($qh, @record, @records);
 
