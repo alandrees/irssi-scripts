@@ -12,7 +12,7 @@ $VERSION = '1.00';
         license         => 'GPLv2',
 );
 
-sub text_trigger{
+sub _text_trigger{
         my ($server, $msg, $nick, $address, $target) = @_;
         my ($selfnick);
         $selfnick = lc($server->{nick});
@@ -60,4 +60,4 @@ sub text_trigger{
 	}
 }
 
-signal_add("message public", "text_trigger");
+signal_add("message public", "_text_trigger");

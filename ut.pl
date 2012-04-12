@@ -13,7 +13,7 @@ $VERSION = '1.00';
         license         => 'GPLv2',
 );
 
-sub uptime{
+sub _uptime{
 
     my($server, $msg, $nick, $address, $target) = @_;
 
@@ -81,4 +81,4 @@ sub uptime{
     }
 }
 
-signal_add("message public", "uptime");
+signal_add("message public", "_uptime");

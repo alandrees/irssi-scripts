@@ -14,7 +14,7 @@ $VERSION = '0.50';
 
 #this code looks like a mess to me... I want to refactor it.
 
-sub net_stat{
+sub _net{
     my($server, $msg, $nick, $address, $target) = @_;
     my($response, $silence_target);
 
@@ -22,9 +22,9 @@ sub net_stat{
     
     if(lc($arguments[0]) eq '!net'){
 	if(exists($arguments[1])){
-	    $response = readpipe("ifstat -i".$arguments."-b 1 1 | grep [0-9]*\.[0-9][0-9] | sed 's/^[ \t]*/Rx: /' | sed 's/ [ \t]*/ Tx: /2'");
-	}elsif($arguments[1] eq 'eth1'){
-	    $response = readpipe("ifstat -i eth1 -b 1 1 | grep [0-9]*\.[0-9][0-9] | sed 's/^[ \t]*/Rx: /' | sed 's/ [ \t]*/ Tx: /2'");
+	    $response = readpipe("ifstat -i".$arguments[1]."-b 1 1 | grep [0-9]*\.[0-9][0-9] | sed 's/^[ \t]*/Rx: /' | sed 's/ [ \t]*/ Tx: /2'");
+#	}elsif($arguments[1] eq 'eth1'){
+#	    $response = readpipe("ifstat -i eth1 -b 1 1 | grep [0-9]*\.[0-9][0-9] | sed 's/^[ \t]*/Rx: /' | sed 's/ [ \t]*/ Tx: /2'");
 	}else{
 	    $response = readpipe("ifstat -b 1 1 | grep [0-9]*\.[0-9][0-9] | sed 's/^[ \t]*/Rx:  /' | sed 's/ [ \t]*/ Tx:  /2' | sed 's/     / || Rx: /' | sed 's/[\t]*//' | sed 's/ [ \t]*/ Tx:  /7'");
 
@@ -50,11 +50,11 @@ sub net_stat{
 
 	    $if_ = $if_."eth0";
 
-	    $server->command('MSG '.$silence_target.' '.$if_);
+	    $server->command('MSG '.$target.' '.$if_);
 	}
     
-	$server->command('MSG '.$silence_target.' '.$response);
+	$server->command('MSG '.$target.' '.$response);
     }
 }
 
-signal_add("message public", "net_stat");
+signal_add("message public", "_net");

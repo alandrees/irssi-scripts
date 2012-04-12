@@ -12,7 +12,7 @@ $VERSION = '1.00';
         license         => 'GPLv3',
 );
 
-sub self_defence{
+sub _tablefix{
         my ($server, $msg, $nick, $address, $target) = @_;
 
         if($msg=~ m/┻(━)*┻/x){
@@ -27,4 +27,4 @@ sub self_defence{
         }
 }
 
-signal_add("message public", "self_defence");
+signal_add("message public", "_tablefix");

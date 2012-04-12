@@ -12,7 +12,7 @@ $VERSION = '1.0';
         license         => 'GPLv3',
 );
 
-sub iostat{
+sub _iostat{
     my($server, $msg, $nick, $address, $target) = @_;
     my($response);
 
@@ -28,4 +28,4 @@ sub iostat{
     }
 }
 
-signal_add("message public", "iostat");
+signal_add("message public", "_iostat");

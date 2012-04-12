@@ -22,17 +22,17 @@ $VERSION = '1.00';
 	     '/media/rtorrent' => ['rtorrent','sde2'],
 	     '/media/musique' => ['musique','music','sdf1']);
 
-sub sizereport{
+sub _sizereport{
     my($server, $msg, $nick, $address, $target) = @_;
     my($response, $path_list);
 
     $path_list = '';
     my @arguments = split(' ',$msg);
-
+    my @mps;
     if(lc($arguments[0]) eq '!sizereport'){
 
 	if($arguments[1] ne ''){
-	    foreach(my @mps = @arguments[1 .. (scalar(@arguments) - 1)]){
+	    foreach(@mps = @arguments[1 .. (scalar(@arguments) - 1)]){
 		my $argument = $_;
 		while ( my ($key, $value) = each (%ALIASES) ){
 		    if($argument eq $key){
@@ -67,7 +67,15 @@ sub sizereport{
 	Irssi::print($path_list);
 
 	if($path_list ne ""){
-	    $response = readpipe("df -h ".$path_list."--total");
+	    if($arguments[1] eq ''){
+		$response = readpipe("df -h ".$path_list."--total");
+	    }else{
+		if(scalar(@mps) == 1){
+		    $response = readpipe("df -h ".$path_list);
+		}else{
+		    $response = readpipe("df -h ".$path_list."--total");
+		}
+	    }
 
 	    my @lines = split(/\n/,$response);
 
@@ -79,4 +87,4 @@ sub sizereport{
     }
 }
       	
-signal_add("message public", "sizereport");
+signal_add("message public", "_sizereport");

@@ -12,7 +12,8 @@ $VERSION = '1.01';
         license         => 'GPLv3',
     );
 
-sub _help{
+
+sub _dice{
     my($server, $msg, $nick, $address, $target) = @_;
 
     if($msg =~ /!dice/){
@@ -23,4 +24,4 @@ sub _help{
     }
 }
 
-signal_add("message public", "_help");
+signal_add("message public", "_dice");

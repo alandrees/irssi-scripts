@@ -12,7 +12,7 @@ $VERSION = '1.00';
         license         => 'GPLv3',
 );
 
-sub self_defence{
+sub _self_defence{
         my ($server, $msg, $nick, $address, $target) = @_;
         my ($selfnick);
 	$selfnick = lc($server->{nick});
@@ -21,4 +21,4 @@ sub self_defence{
         }
 }
 
-signal_add("message irc action", "self_defence");
+signal_add("message irc action", "_self_defence");

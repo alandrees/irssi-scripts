@@ -5,7 +5,7 @@ use Irssi qw(command_bind signal_add);
 
 $VERSION = '1.00';
 %IRSSI = (
-        authors         => 'Alan Drees'
+        authors         => 'Alan Drees',
         contact         => 'alandrees@theselves.com',
         name            => 'rtorrent',
         description     => 'get the current rtorrent throughput',
@@ -14,9 +14,9 @@ $VERSION = '1.00';
 
 
 #set this to the location of the rtorrent-rate.sh script
-$SCRIPT_DIR = "~/.scripts/";
+our $SCRIPT_DIR = "~/scripts/";
 
-sub rtorrent{
+sub _rtorrent{
     my($server, $msg, $nick, $address, $target) = @_;
     my($response, $dl, $ul);
 
@@ -29,7 +29,4 @@ sub rtorrent{
     }
 }
 
-sub silence_target{
-}
-
-signal_add("message public", "rtorrent");
+signal_add("message public", "_rtorrent");

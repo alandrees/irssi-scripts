@@ -12,7 +12,7 @@ $VERSION = '0.50';
         license         => 'GPLv3',
 );
 
-sub resolve{
+sub _resolve{
     my($server, $msg, $nick, $address, $target) = @_;
     my($response);
 
@@ -25,4 +25,4 @@ sub resolve{
     }
 }
 
-signal_add("message public", "resolve");
+signal_add("message public", "_resolve");
