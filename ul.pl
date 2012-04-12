@@ -24,7 +24,7 @@ $VERSION = '1.00';
         license         => 'GPLv3',
 );
 
-#chdir "/home/sicklebot";
+chdir "~";
 
 sub shorten{   
     my($server, $msg, $nick, $address, $target) = @_;
@@ -225,7 +225,7 @@ sub setup_db{
     my($data, $server, $witem) = @_;
     my $db = DBI->connect( "dbi:SQLite:dbname=url.db" ,"" ,"");
     
-    $db->do("CREATE TABLE urlist (id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT, nick TEXT, date INTEGER);");
+    $db->do("CREATE TABLE urlist (id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT, nick TEXT,  date INTEGER);");
     $db->disconnect();
     Irssi::print("Database Created");
 }
@@ -243,8 +243,8 @@ sub trigger_history{
 	    
 
 	    if ( (scalar(@urllist) % 4) == 0){
-		while( my ($id, $url, $nick, $date) = splice(@urllist,0,4)){
-		    $server->command("MSG " . $nick . " " . googl($url) ." - " . title($url,1) ." linked by  6". $nick ." on ". strftime "%e/%m/%Y %T", gmtime($date));
+		while( my ($did, $durl, $dnick, $ddate) = splice(@urllist,0,4)){
+		    $server->command("MSG " . $nick . " " . googl($durl) ." - " . title($durl,1) ." linked by  6". $dnick ." on ". strftime "%e/%m/%Y %T", gmtime($ddate));
 		}
 	    }
 	}
