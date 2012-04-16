@@ -58,6 +58,11 @@ sub _text_trigger{
 	    $server->command('msg '.$target.' (V) (;,,;) (V)');
 	    return
 	}
+
+	#crazy
+	if(lc($msg) =~ '!cz'){
+	    $server->command('msg '.$target.' ヽ( ｡ ヮﾟ)7');
+	}
 }
 
 signal_add("message public", "_text_trigger");

@@ -16,9 +16,9 @@ $VERSION = '1.01';
 sub _dice{
     my($server, $msg, $nick, $address, $target) = @_;
 
-    if($msg =~ /!dice/){
-	my @arguments = split(' ',$msg); 
-	
+    
+    my @arguments = split(' ',$msg); 
+    if($arguments[0] =~ /!dice/){ 
 	$server->command( 'MSG '.$target.' '.$nick.': '.$arguments[ int( rand( ( scalar( @arguments ) - 1 ) ) + 1)] );
 
     }
