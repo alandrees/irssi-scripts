@@ -1,18 +1,18 @@
 use strict;
-use vars qw($VERSION %IRSSI %channels);
+use vars qw($VERSION %IRSSI %channels $MPD_SERVER $MPD_PORT);
 
 use Irssi qw(command_bind signal_add signal_stop channel_find);
 use IO::Socket::INET;
 use Encode;
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 
 %IRSSI = (
 	authors		=> 'Alan Drees',
 	contact		=> 'alandrees@theselves.com',
 	name		=> 'Now Playing: mpd edition',
 	description	=> 'Displays the currently playing song retrieved from MPD, either on the same system or remotely.  Also allows for remote triggering, via screen registers.',
-	license		=> 'free to use, free to destroy',
+	license		=> 'GPLv3',
 );
 
 $MPD_SERVER = "127.0.0.1";
@@ -37,12 +37,13 @@ sub local_np{
 
     my $title = get_title();
 
-    if(defined($channel)){
-	$server->command('action '.$channel->{'name'}.' '.$title.' '.$data);
-    }else{
-	Irssi::print($title);
+    if($title ne ""){
+	if(defined($channel)){
+	    $server->command('action '.$channel->{'name'}.' '.$title.' '.$data);
+	}else{
+	    Irssi::print($title);
+	}
     }
-
 }
 		   
 sub get_title{
@@ -69,15 +70,26 @@ sub get_title{
     #style this however you like
     my $title = "3listens 7to9 ".%songinfo->{"Artist"} . " - " . %songinfo->{"Album"} . " - " . %songinfo->{"Title"} . "1 @7 " . $minutes . ":" . $seconds;
 
-    return $title;
+    if( (scalar keys %songinfo) != 0 ){
+	return $title;
+    }else{
+	return "";
+    }
 }
 
 sub get_data{
     my ($command) = @_;
 
-    #replace 127.0.0.1 with the ip address of the mpd system, if irssi and mpd are
-    #not on the same system.
+    my @output;
+
+    my @lines;
+    my (@items, %param);
+
     my $socket = IO::Socket::INET->new(PeerAddr => $MPD_SERVER,PeerPort => $MPD_PORT,);
+
+    if ($socket == ""){
+	return;
+    }
 
     my $line = $socket->getline;
 
@@ -85,29 +97,28 @@ sub get_data{
 
     die "Not an mpd server -welcome string was [$line]\n"
 	if $line !~ /^OK MPD (.+)$/;
-    
+	
     my $version = $1;
 
     
     $socket->print( encode("utf-8", $command."\n") );
     
-    my @output;
+
           
     while (defined (my $line = $socket->getline)){
 	chomp $line;
 	last if $line =~ /^OK/;
 	push @output, decode('utf-8', $line);
     }
-    
-    my @lines = @output;
-    my (@items, %param);
 
+    @lines = @output;
+    
     foreach my $line (reverse @lines){
 	my ($k, $v) = split /:\s/, $line, 2;
 	$param{$k} = $v;
 	next unless $k eq 'file' || $k eq 'directory' || $k eq 'playlist';
     }
-    
+   
     return %param;
 }
 
