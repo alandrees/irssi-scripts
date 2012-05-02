@@ -18,25 +18,25 @@ sub _text_trigger{
         $selfnick = lc($server->{nick});
        
 	#beer
-	if(lc($msg) =~ "!br"){
+	if(lc($msg) =~ '!br'){
 	    $server->command('msg '.$target.' ヽ( ｡ヮﾟ)c[~]');
 	    return
         }
 
 	#table flip
-	if(lc($msg) =~ "!tf"){
+	if(lc($msg) =~ '!tf'){
 	    $server->command('msg '.$target.' (╯ `Д´)╯ ~┻━━━┻');
 	    return
         }
 
 	#coffee
-	if(lc($msg) =~ "!cf"){
+	if(lc($msg) =~ '!cf'){
 	    $server->command('msg '.$target.' \( \'-\')c[~]');
 	    return
         }
 
 	#kyubi
-	if(lc($msg) =~ "!ky"){                                                                            
+	if(lc($msg) =~ '!ky'){                                                                            
 	    $server->command('msg '.$target.' ／人◕ ‿‿ ◕人＼');
 	    return
 	}
@@ -62,6 +62,11 @@ sub _text_trigger{
 	#crazy
 	if(lc($msg) =~ '!cz'){
 	    $server->command('msg '.$target.' ヽ( ｡ ヮﾟ)7');
+	}
+
+	#point
+	if(lc($msg) =~ '!pt'){
+	    $server->command('msg '.$target.' ☜(ﾟヮﾟ☜)');
 	}
 }
 
