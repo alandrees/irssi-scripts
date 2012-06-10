@@ -30,7 +30,7 @@ $VERSION = '1.00';
         license         => 'GPLv3',
 );
 
-$DBFILE = "~/.irssi/url.db"
+$DBFILE = "~/.irssi/url.db";
 
 sub shorten{   
     my($server, $msg, $nick, $address, $target) = @_;
