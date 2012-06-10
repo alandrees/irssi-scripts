@@ -1,6 +1,6 @@
 use strict;
 use Irssi;
-use vars qw($VERSION %IRSSI);
+use vars qw($VERSION %IRSSI $DBFILE);
 use JSON::XS;
 use HTTP::Request;
 use LWP::UserAgent;
@@ -30,7 +30,7 @@ $VERSION = '1.00';
         license         => 'GPLv3',
 );
 
-chdir "~";
+$DBFILE = "~/.irssi/url.db"
 
 sub shorten{   
     my($server, $msg, $nick, $address, $target) = @_;
@@ -213,7 +213,7 @@ sub googl{
 
 sub log_url{
     my($url, $nick, $channel) = @_;
-    my $db = DBI->connect("dbi:SQLite:dbname=url.db","","");
+    my $db = DBI->connect("dbi:SQLite:dbname=".$DBFILE,"","");
     $db->quote($url);
     $db->quote($nick);
     $db->quote($channel);
@@ -229,7 +229,7 @@ sub log_url{
 
 sub setup_db{
     my($data, $server, $witem) = @_;
-    my $db = DBI->connect( "dbi:SQLite:dbname=url.db" ,"" ,"");
+    my $db = DBI->connect( "dbi:SQLite:dbname=".$DBFILE ,"" ,"");
     
     $db->do("CREATE TABLE urlist (id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT, nick TEXT, date INTEGER, channel TEXT);");
     $db->disconnect();
