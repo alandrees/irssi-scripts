@@ -1,6 +1,6 @@
 use strict;
 use Irssi;
-use vars qw($VERSION %IRSSI $DBFILE);
+use vars qw($VERSION %IRSSI $DBPATH);
 use JSON::XS;
 use HTTP::Request;
 use LWP::UserAgent;
@@ -30,7 +30,13 @@ $VERSION = '1.00';
         license         => 'GPLv3',
 );
 
-$DBFILE = "~/.irssi/url.db";
+
+##NOTE: Careful with ~. If you su'd into a bot's account, use the full path, because ~ will be for the 
+#       account you originally logged in as (even if you did something like script /dev/null 
+#       or the like).
+
+$DBPATH = "~/.irssi";
+chdir $DBPATH;
 
 sub shorten{   
     my($server, $msg, $nick, $address, $target) = @_;
@@ -212,8 +218,9 @@ sub googl{
 }
 
 sub log_url{
+    Irssi::print(getcwd);
     my($url, $nick, $channel) = @_;
-    my $db = DBI->connect("dbi:SQLite:dbname=".$DBFILE,"","");
+    my $db = DBI->connect("dbi:SQLite:dbname=url.db","","");
     $db->quote($url);
     $db->quote($nick);
     $db->quote($channel);
@@ -229,7 +236,7 @@ sub log_url{
 
 sub setup_db{
     my($data, $server, $witem) = @_;
-    my $db = DBI->connect( "dbi:SQLite:dbname=".$DBFILE ,"" ,"");
+    my $db = DBI->connect( "dbi:SQLite:dbname=url.db","" ,"");
     
     $db->do("CREATE TABLE urlist (id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT, nick TEXT, date INTEGER, channel TEXT);");
     $db->disconnect();
