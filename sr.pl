@@ -14,13 +14,8 @@ $VERSION = '1.00';
 #it will use the keys here to create a list of mount points to add to the sizereport
 
 #mountpoint => (list of ailiases)
-%ALIASES = ( '/media/movies' => ['movies','sdb1'],
-	     '/media/video' => ['video','sdc1'],
-	     '/media/production' => ['production','sdd1'],
-	     '/media/data' => ['data','backups','sdd2'],
-	     '/media/vms' => ['vms','sde1'],
-	     '/media/rtorrent' => ['rtorrent','sde2'],
-	     '/media/musique' => ['musique','music','sdf1']);
+%ALIASES = ( '/mnt/data' => ['data','backups','sda1'],
+	     '/mnt/local-data' => ['local-data','backups','sdd2'] );
 
 sub _sizereport{
     my($server, $msg, $nick, $address, $target) = @_;
