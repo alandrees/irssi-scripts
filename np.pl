@@ -1,4 +1,7 @@
 use strict;
+
+use script_config;
+
 use vars qw($VERSION %IRSSI %channels $MPD_SERVER $MPD_PORT);
 
 use Irssi qw(command_bind signal_add signal_stop channel_find);
@@ -14,9 +17,6 @@ $VERSION = '1.01';
 	description	=> 'Displays the currently playing song retrieved from MPD, either on the same system or remotely.  Also allows for remote triggering, via screen registers.',
 	license		=> 'GPLv3',
 );
-
-$MPD_SERVER = "127.0.0.1";
-$MPD_PORT = "6600";
 
 sub remote_np{
     my($data, $server, $channel) = @_;
@@ -85,7 +85,7 @@ sub get_data{
     my @lines;
     my (@items, %param);
 
-    my $socket = IO::Socket::INET->new(PeerAddr => $MPD_SERVER,PeerPort => $MPD_PORT,);
+    my $socket = IO::Socket::INET->new(PeerAddr => $script_config::np_MPD_SERVER,PeerPort => $script_config::np_MPD_PORT,);
 
     if ($socket == ""){
 	return;
