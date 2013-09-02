@@ -1,5 +1,6 @@
 use strict;
 use Irssi;
+use script_config;
 use vars qw($VERSION %IRSSI $DBPATH);
 use JSON::XS;
 use HTTP::Request;
@@ -36,8 +37,7 @@ $VERSION = '1.00';
 #       account you originally logged in as (even if you did something like script /dev/null 
 #       or the like).
 
-$DBPATH = "~/.irssi";
-chdir $DBPATH;
+chdir $script_config::ul_DBPATH;
 
 sub shorten{   
     my($server, $msg, $nick, $address, $target) = @_;
