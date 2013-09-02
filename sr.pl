@@ -1,4 +1,7 @@
 use strict;
+
+use script_config;
+
 use vars qw($VERSION %IRSSI %ALIASES);
 use Irssi qw(command_bind signal_add);
 
@@ -14,8 +17,8 @@ $VERSION = '1.00';
 #it will use the keys here to create a list of mount points to add to the sizereport
 
 #mountpoint => (list of ailiases)
-%ALIASES = ( '/mnt/data' => ['data','backups','sda1'],
-	     '/mnt/local-data' => ['local-data','backups','sdd2'] );
+#%ALIASES = ( '/mnt/data' => ['data','backups','sda1'],
+#	     '/mnt/local-data' => ['local-data','backups','sdd2'] );
 
 sub _sizereport{
     my($server, $msg, $nick, $address, $target) = @_;
@@ -24,12 +27,13 @@ sub _sizereport{
     $path_list = '';
     my @arguments = split(' ',$msg);
     my @mps;
+
     if(lc($arguments[0]) eq '!sizereport'){
 
 	if($arguments[1] ne ''){
 	    foreach(@mps = @arguments[1 .. (scalar(@arguments) - 1)]){
 		my $argument = $_;
-		while ( my ($key, $value) = each (%ALIASES) ){
+		while ( my ($key, $value) = each (%script_config::sr_ALIASES) ){
 		    if($argument eq $key){
 			if(index($path_list, $key) == -1){
 			    $path_list .= $key . " ";
@@ -51,15 +55,13 @@ sub _sizereport{
 		}
 	    }
 	}else{
-	    my @temp_keys = keys(%ALIASES);
+	    my @temp_keys = keys(%script_config::sr_ALIASES);
 	    
 	    foreach(@temp_keys){
 
 		$path_list .= $_ . " ";
 	    }
 	}
-
-	Irssi::print($path_list);
 
 	if($path_list ne ""){
 	    if($arguments[1] eq ''){
