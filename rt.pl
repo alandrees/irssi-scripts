@@ -1,4 +1,5 @@
 use strict;
+use script_config;
 use vars qw($VERSION %IRSSI);
 
 use Irssi qw(command_bind signal_add);
@@ -14,8 +15,6 @@ $VERSION = '1.00';
 
 
 #set this to the location of the rtorrent-rate.sh script
-our $SCRIPT_DIR = "~/scripts/";
-
 sub _rtorrent{
     my($server, $msg, $nick, $address, $target) = @_;
     my($response, $dl, $ul);
@@ -23,8 +22,8 @@ sub _rtorrent{
     my @arguments = split(' ',$msg);
     
     if(lc($arguments[0]) eq '!rtorrent'){
-	$dl = readpipe($SCRIPT_DIR."rtorrent-rate.sh download_rate");
-	$ul = readpipe($SCRIPT_DIR."rtorrent-rate.sh upload_rate");   
+	$dl = readpipe($script_config::rt_SCRIPT_DIR."rtorrent-rate.sh download_rate");
+	$ul = readpipe($script_config::rt_SCRIPT_DIR."rtorrent-rate.sh upload_rate");   
     	$server->command("MSG ".$target." Upload: ".$ul." "."Download: ".$dl); 
     }
 }
