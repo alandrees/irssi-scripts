@@ -19,6 +19,7 @@ use threads;
 ####TODO:
 ####     sprintf all the db queries
 ####     add the other db search command line options
+####     add other statistical analysis of the database
 ##########################
 
 $VERSION = '1.00';
@@ -301,11 +302,10 @@ sub get_url_list{
     return @records;
 }
 
-sub url_stats{
-    my($server, $msg, $nick, $address, $target) = @_;
-    my($db, $qr, $result);
+sub url_count{
+    my($query, $db, $qr, $result);
 
-    my $db = DBI->connect("dbi:SQLite:dbname=url.db","","");
+    my $db = DBI->connect("dbi:SQLite:dbname=/home/sicklebot/.irssi/url.db","","");
     $query = "SELECT COUNT(id) FROM urlist;";
 
     $qr = $db->prepare($query);
@@ -317,12 +317,26 @@ sub url_stats{
     Irssi::print($result);
 
     $db->disconnect();
+
+    return $result;
+}
+
+sub trigger_count{
+    my($server, $msg, $nick, $address, $target) = @_;
+
+    $server->command("MSG ".$target." "."There are currently ".url_count()." urls in the database.");
+}
+
+sub assemble_statistics{
+    #statistics like who posts most frequently, 
+    #what domains are most frequent
 }
     
 Irssi::signal_add('message private',\&shorten );
 Irssi::signal_add('message public', \&trigger_title);
 Irssi::signal_add('message irc action', \&trigger_title);
 Irssi::signal_add('message public', \&trigger_history);
+Irssi::signal_add('message public', \&trigger_count);
 Irssi::command_bind('setupdb', \&setup_db);
 #Irssi::signal_add('message public',\&url_stats);
 #Irssi::signal_add('message private',\&url_stats);
