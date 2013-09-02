@@ -15,8 +15,10 @@ $VERSION = '0.75';
 	license		=> 'GPLv3',
 );
 
+
 #format: network name => [username, auth service name, password]
-%authorizations = ('netname' =>  ["username","servicename","password"]);
+#%authorizations = ('netname' =>  ["username","servicename","password"]);
+require "config.pl";
 		   
 sub identificator{
     my ($data, $server) = @_;
