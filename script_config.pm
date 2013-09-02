@@ -10,17 +10,17 @@ use strict;
 #ul.pl
 
 #ident.pl
-%id_authorizations = ('netname' => ["username","servicename", "password"]);
+our %id_authorizations = ('netname' => ["username","servicename", "password"]);
 
 #np.pl
-$np_MPD_SERVER = "127.0.0.1";
-$np_MPD_PORT   = "6600";
+our $np_MPD_SERVER = "127.0.0.1";
+our $np_MPD_PORT   = "6600";
 
 #rt.pl
-$rt_SCRIPT_DIR = "~/scripts/";
+our $rt_SCRIPT_DIR = "~/scripts/";
 
 #sr.pl
-%sr_ALIASES = ( 'path-to-mountpoint' => ['array', 'of', 'aliases']);
+our %sr_ALIASES = ( 'path-to-mountpoint' => ['array', 'of', 'aliases']);
 
 #ul.pl
-$ul_DBPATH = "~/.irssi";
+our $ul_DBPATH = "~/.irssi";
