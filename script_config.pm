@@ -1,4 +1,4 @@
-package scriptcfg;
+package script_config;
 
 use strict;
 
