@@ -226,7 +226,7 @@ sub log_url{
     $db->quote($channel);
     
     my $query = "INSERT INTO urlist (`url`,`nick`,`date`,`channel`) VALUES('".$url."','".$nick."',strftime('%s'),'".$channel."');";
-    Irssi::print($query);
+    #Irssi::print($query);
     my $qh = $db->prepare($query);
 
     $qh->execute();
@@ -301,8 +301,29 @@ sub get_url_list{
     return @records;
 }
 
+sub url_stats{
+    my($server, $msg, $nick, $address, $target) = @_;
+    my($db, $qr, $result);
+
+    my $db = DBI->connect("dbi:SQLite:dbname=url.db","","");
+    $query = "SELECT COUNT(id) FROM urlist;";
+
+    $qr = $db->prepare($query);
+
+    $qr->execute();
+    
+    $result = $qr->fetchrow_array();
+    
+    Irssi::print($result);
+
+    $db->disconnect();
+}
+    
 Irssi::signal_add('message private',\&shorten );
 Irssi::signal_add('message public', \&trigger_title);
 Irssi::signal_add('message irc action', \&trigger_title);
 Irssi::signal_add('message public', \&trigger_history);
 Irssi::command_bind('setupdb', \&setup_db);
+#Irssi::signal_add('message public',\&url_stats);
+#Irssi::signal_add('message private',\&url_stats);
+Irssi::command_bind('test', \&url_stats);
