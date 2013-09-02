@@ -221,13 +221,12 @@ sub googl{
 sub log_url{
     Irssi::print(getcwd);
     my($url, $nick, $channel) = @_;
-    my $db = DBI->connect("dbi:SQLite:dbname=url.db","","");
+    my $db = DBI->connect("dbi:SQLite:dbname=".$script_config::ul_DBPATH,"","");
     $db->quote($url);
     $db->quote($nick);
     $db->quote($channel);
     
     my $query = "INSERT INTO urlist (`url`,`nick`,`date`,`channel`) VALUES('".$url."','".$nick."',strftime('%s'),'".$channel."');";
-    #Irssi::print($query);
     my $qh = $db->prepare($query);
 
     $qh->execute();
@@ -237,7 +236,7 @@ sub log_url{
 
 sub setup_db{
     my($data, $server, $witem) = @_;
-    my $db = DBI->connect( "dbi:SQLite:dbname=url.db","" ,"");
+    my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH,"" ,"");
     
     $db->do("CREATE TABLE urlist (id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT, nick TEXT, date INTEGER, channel TEXT);");
     $db->disconnect();
@@ -285,7 +284,7 @@ sub trigger_history{
 sub get_url_list{
     my(%options) = @_;
     
-    my $db = DBI->connect( "dbi:SQLite:dbname=url.db", "","",{ RaiseError => 1, AutoCommit => 1});
+    my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH, "","",{ RaiseError => 1, AutoCommit => 1});
     
     my($qh, @record, @records);
 
@@ -305,7 +304,7 @@ sub get_url_list{
 sub url_count{
     my($query, $db, $qr, $result);
 
-    my $db = DBI->connect("dbi:SQLite:dbname=/home/sicklebot/.irssi/url.db","","");
+    my $db = DBI->connect("dbi:SQLite:dbname=".$script_config::ul_DBPATH,"","");
     $query = "SELECT COUNT(id) FROM urlist;";
 
     $qr = $db->prepare($query);
@@ -324,7 +323,9 @@ sub url_count{
 sub trigger_count{
     my($server, $msg, $nick, $address, $target) = @_;
 
-    $server->command("MSG ".$target." "."There are currently ".url_count()." urls in the database.");
+    if ($msg =~ "!ucount") {
+        $server->command("MSG ".$target." "."There are currently ".url_count()." urls in the database.");
+    }
 }
 
 sub assemble_statistics{
