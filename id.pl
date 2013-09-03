@@ -48,7 +48,7 @@ sub nick_handler{
                 return;
 	   }
 
-	  $server->command('msg SickleNick GROUP Pie_Mage '.$auth_array[2]);
+	  $server->command('msg NickServ GROUP '.$auth_array[0].' '.$auth_array[2]);
 	}
 }
 
