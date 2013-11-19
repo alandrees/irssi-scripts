@@ -15,12 +15,18 @@ $VERSION = '1.01';
 
 sub _dice{
     my($server, $msg, $nick, $address, $target) = @_;
-
+    my $delimiter;
     
-    my @arguments = split(' ',$msg); 
+    if(index($msg,',') != -1){
+	$delimiter = ',';
+    }
+    else{
+        $delimiter = ' ';
+    }
+
+    my @arguments = split($delimiter, $msg); 
     if($arguments[0] =~ /!dice/){ 
 	$server->command( 'MSG '.$target.' '.$nick.': '.$arguments[ int( rand( ( scalar( @arguments ) - 1 ) ) + 1)] );
-
     }
 }
 
