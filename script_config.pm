@@ -27,4 +27,4 @@ our %sr_ALIASES = ( 'path-to-mountpoint' => ['array', 'of', 'aliases']);
 our $ul_DBPATH = "~/.irssi";
 
 #ut.pl
-our $uptime_program = "/path/to/uptime/command"
+our $uptime_command = "cat /proc/uptime | awk '{print $1}'"
