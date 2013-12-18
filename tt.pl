@@ -68,6 +68,13 @@ sub _text_trigger{
 	if(lc($msg) =~ '!pt'){
 	    $server->command('msg '.$target.' ☜(ﾟヮﾟ☜)');
 	}
+	
+	#david caruso
+	if(lc($msg) =~ '!dc'){
+	    $server->command('msg '.$target.' (•_•)');
+	    $server->command('msg '.$target.'  ( •_•)>⌐■-■');
+	    $server->command('msg '.$target.' (⌐■_■)');
+	}
 }
 
 signal_add("message public", "_text_trigger");
