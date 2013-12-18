@@ -8,6 +8,7 @@ use strict;
 #rt.pl
 #sr.pl
 #ul.pl
+#ut.pl
 
 #ident.pl
 our %id_authorizations = ('netname' => ["username","servicename", "password"]);
@@ -24,3 +25,6 @@ our %sr_ALIASES = ( 'path-to-mountpoint' => ['array', 'of', 'aliases']);
 
 #ul.pl
 our $ul_DBPATH = "~/.irssi";
+
+#ut.pl
+our $uptime_program = "/path/to/uptime/command"
