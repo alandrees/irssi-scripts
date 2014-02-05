@@ -115,23 +115,25 @@ sub title{
     }elsif($url=~ m/youtube.com/){
 	$title = youtube_title($url);
     }else{
-	if($url =~ 
 	my $req = HTTP::Request->new('GET',$url);
 
 	my $lwp = LWP::UserAgent->new;
 
 	my $mimetype = $lwp->head($url);
 
-	my $response = $lwp->request($req);
+	my @content_type = split(';',$mimetype->header('Content-Type'));
+	
+	if( (@content_type[0] =~ m/^text\/html/ ) || ( @content_type[0] =~ m/^text\/plain/ ) ){
+		my $response = $lwp->request($req);
 
-	my $p = HTML::HeadParser->new;
-	$p->parse($response->decoded_content);
+		my $p = HTML::HeadParser->new;
+		$p->parse($response->decoded_content);
 
-	if($gl_url != 1){
-	    my $g = googl($url);
-	    if($g ne ""){
-		$title .= $g . " - ";
-	    }
+		if($gl_url != 1){
+		    my $g = googl($url);
+		    if($g ne ""){
+			$title .= $g . " - ";
+		    }
 	}
 
 	$title .= $p->header('Title');
@@ -223,7 +225,6 @@ sub googl{
 }
 
 sub log_url{
-    Irssi::print(getcwd);
     my($url, $nick, $channel) = @_;
     my $db = DBI->connect("dbi:SQLite:dbname=".$script_config::ul_DBPATH,"","");
     $db->quote($url);
@@ -288,13 +289,13 @@ sub trigger_history{
 sub check_for_repost{
     my($url, $channel) = @_;
 
-    my $db = DBI->connect( "dbi:SqLite:dbname=".$script_config::ul_DBPATH, "","",{RaiseError => 1, AutoCommit => 1});
+    my $db = DBI->connect( "dbi:SqLite:dbname=".$script_config::ul_DBPATH, "","", {RaiseError => 1, AutoCommit => 1} );
 
     my(%query, $qh, @record, @records);
 
     %query = (query => "SELECT * FROM `urllist` WHERE `channel` = '".$channel."' AND `url` = '".$url."';");
 
-    $qh = $db->prepare($query);
+    $qh = $db->prepare(%query);
     $qh->execute();
 
     #check to see if it has been posted before
