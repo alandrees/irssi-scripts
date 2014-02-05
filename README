@@ -15,6 +15,7 @@ np.pl - Allows for displaying of the current track playing in an mpd player.  Al
 misc.pl - Various useful commands.  In this case, just /lod (outputs the Look of Disapproval)
 ident.pl - Does multi-server identification, with different usernames and authorization mechanisms. Automatic grouping and ungrouping is not working atm.  Might be in the future, might not be.
 di.pl - Dice script. Space delimited list of options, randomly chooses between them.  For those who have too much on the go and cannot decide on something to do...
+dd.pl - Uses the ddate function to get the current discordian date
 tf.pl - When things get hairy, and tables get flipped, someone needs to keep order and peace.  Install this script to have someone take care of cleaning up automatically.
 net.pl - Current network IO.
 hlp.pl - Help.  Provides help on the installed commands.  Sorta useless atm.
