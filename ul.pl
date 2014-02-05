@@ -115,9 +115,13 @@ sub title{
     }elsif($url=~ m/youtube.com/){
 	$title = youtube_title($url);
     }else{
+	if($url =~ 
 	my $req = HTTP::Request->new('GET',$url);
-    
+
 	my $lwp = LWP::UserAgent->new;
+
+	my $mimetype = $lwp->head($url);
+
 	my $response = $lwp->request($req);
 
 	my $p = HTML::HeadParser->new;
@@ -280,6 +284,30 @@ sub trigger_history{
     }
 
 }
+
+sub check_for_repost{
+    my($url, $channel) = @_;
+
+    my $db = DBI->connect( "dbi:SqLite:dbname=".$script_config::ul_DBPATH, "","",{RaiseError => 1, AutoCommit => 1});
+
+    my(%query, $qh, @record, @records);
+
+    %query = (query => "SELECT * FROM `urllist` WHERE `channel` = '".$channel."' AND `url` = '".$url."';");
+
+    $qh = $db->prepare($query);
+    $qh->execute();
+
+    #check to see if it has been posted before
+
+    #return the date and user who posted it before
+
+    return;
+}
+
+
+    
+
+    
 
 sub get_url_list{
     my(%options) = @_;
