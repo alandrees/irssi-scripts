@@ -125,20 +125,24 @@ sub title{
 	
 	if( (@content_type[0] eq "text/html" ) || ( @content_type[0] eq "text/plain" ) ){
  
-	    my $response = $lwp->request($req);
+	    if(@content_type[0] eq "text/html"){
 
-	    my $p = HTML::HeadParser->new;
-	    $p->parse($response->decoded_content);
+		    my $response = $lwp->request($req);
 
-	    if($gl_url != 1){
-		my $g = googl($url);
+		    my $p = HTML::HeadParser->new;
+		    $p->parse($response->decoded_content);
 
-		if($g ne ""){
-		    $title .= $g . " - ";
-		}
-	    }
+		    if($gl_url != 1){
+			my $g = googl($url);
 
-	    $title .= $p->header('Title');
+			if($g ne ""){
+		    		$title .= $g . " - ";
+			}
+		    }
+
+		    $title .= $p->header('Title');
+	    }else{
+		
 
 	}else{
 	    $title .= @content_type[0];
