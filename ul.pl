@@ -125,6 +125,8 @@ sub title{
 	
 	if( (@content_type[0] eq "text/html" ) || ( @content_type[0] eq "text/plain" ) ){
  
+		Irssi::print(@content_type[0]);
+
 	    if(@content_type[0] eq "text/html"){
 
 		    my $response = $lwp->request($req);
@@ -132,7 +134,7 @@ sub title{
 		    my $p = HTML::HeadParser->new;
 		    $p->parse($response->decoded_content);
 
-		    if($gl_url != 1){
+ 		    if($gl_url != 1){
 			my $g = googl($url);
 
 			if($g ne ""){
@@ -142,8 +144,13 @@ sub title{
 
 		    $title .= $p->header('Title');
 	    }else{
+		my $response = $lwp->request($req);
 		
+		my @lines = split('\n', $response->decoded_content);
 
+		$title .= @lines[0];
+	    }	
+		
 	}else{
 	    $title .= @content_type[0];
 	}
