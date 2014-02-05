@@ -3,8 +3,8 @@ A bunch of IRC scripts and a couple helper scripts:
 These are best used by leaving this all in a directory, then symlinking where you want them, except for the config file, which needs to be copied into your ~/.irssi/scripts directory, and configured as described in the documentation.
 
 ip.pl - Resolve a DNS to an IP address.  Still a bit broken.  Will fix in the future.
-nt.pl - "#this script will eventually be used for nick tracking by sicklebot"
-ut.pl - Outputs the uptime of the system it is running on.  Retrieved from /proc/uptime.
+nt.pl - "this script will eventually be used for nick tracking by sicklebot"
+ut.pl - Outputs the uptime of the system it is running on.  Retrieved from /proc/uptime.  Can also be configured to get uptime by running a script on a remote machine.
 tt.pl - Various text triggers for some ascii character (Look of Disapproval, tableflip, etc.)
 sr.pl - Size report.  Lists in IRC the output of df -h.  Will make it a bit more modular soon enough.
 sd.pl - Self Defence.  Stops the violence.
