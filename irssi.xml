@@ -27,19 +27,17 @@ vim:syntax=lua
 ]]?>
 
 <?vlc
-package.loaded.httprequests = nil --uncomment to debug changes
+--package.loaded.httprequests = nil --uncomment to debug changes
 require "httprequests"
 
 httprequests.processcommands()
 
-local statusTable=httprequests.getstatus(false)
-
 print('<root>\n')
-
 
 local item = vlc.input.item()
 
-if item then
+if item ~= nil then
+
    for k, v in pairs(item:info()) do
       for k2, v2 in pairs(v) do
          if(k2 == 'Resolution') then
@@ -48,7 +46,10 @@ if item then
       end
    end
 
+   local statusTable = httprequests.getstatus(false)
+
    print("<time>"..statusTable['time'].."</time>");
+
    
    local metas = item:metas()
    print("<title>"..httprequests.xmlString(metas['filename']).."</title>")
