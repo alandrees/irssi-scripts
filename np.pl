@@ -2,10 +2,15 @@ use strict;
 
 use script_config;
 
-use vars qw($VERSION %IRSSI %channels $MPD_SERVER $MPD_PORT);
+use vars qw($VERSION %IRSSI %channels);
 
 use Irssi qw(command_bind signal_add signal_stop channel_find);
 use IO::Socket::INET;
+use XML::Simple;
+use HTTP::Request;
+use LWP::UserAgent;
+use LWP::Simple;
+use Module::Refresh;
 use Encode;
 
 $VERSION = '1.01';
@@ -18,6 +23,17 @@ $VERSION = '1.01';
 	license		=> 'GPLv3',
 );
 
+
+#\fn remote_np
+#
+# Used to trigger an mpd np in a window which may or may not be the active one
+#
+# @param $data placeholder variable
+# @param $server Irssi server object
+# @param $channel channel to send to
+# 
+# returns None
+
 sub remote_np{
     my($data, $server, $channel) = @_;
 
@@ -26,16 +42,25 @@ sub remote_np{
     if(scalar(@args) != 0){
 	foreach my $chan (@args){
 	    my $chan = channel_find($chan);
-	
 	    local_np("", $chan->{'server'}, $chan);
 	}
     }
 }
 
+#\fn local_np
+#
+# Used to trigger an mpd np in a window (bound to the channel that it is passed as an argument)
+#
+# @param $data placeholder variable
+# @param $server Irssi server object
+# @param $channel channel to send to
+# 
+# returns None
+
 sub local_np{
     my($data, $server, $channel) = @_;
 
-    my $title = get_title();
+    my $title = get_np_mpd();
 
     if($title ne ""){
 	if(defined($channel)){
@@ -45,30 +70,40 @@ sub local_np{
 	}
     }
 }
+
+#\fn get_np_mpd
+#
+# Used to trigger an np in a window which may or may not be the active one
+#
+# @param $data placeholder variable
+# @param $server Irssi server object
+# @param $channel channel to send to
+# 
+# returns None
 		   
-sub get_title{
+sub get_np_mpd{
     my ($data, $server, $channel) = @_;
     
-    my %songinfo = get_data('currentsong');
+    my %songinfo = get_data_mpd('currentsong');
     
-    my %statusinfo = get_data('status');
+    my %statusinfo = get_data_mpd('status');
     
-    if(%statusinfo->{"state"} == "play"){
+    if($statusinfo{"state"} == "play"){
 	#do play stuff
-    }elsif(%statusinfo->{"state"} == "pause"){
+    }elsif($statusinfo{"state"} == "pause"){
 	#do pause stuff
-    }elsif(%statusinfo->{"state"} == "stop"){
+    }elsif($statusinfo{"state"} == "stop"){
 	#do stop stuff
     }
 
-    my $a = %statusinfo->{"time"};
+    my $a = $statusinfo{"time"};
     $a =~ m/(\d+)/;
 
     my $minutes = sprintf "%.0f", $a / 60;
     my $seconds = sprintf "%02d",$a % 60;
 
     #style this however you like
-    my $title = "3listens 7to9 ".%songinfo->{"Artist"} . " - " . %songinfo->{"Album"} . " - " . %songinfo->{"Title"} . "1 @7 " . $minutes . ":" . $seconds;
+    my $title = "3listens 7to9 ".$songinfo{"Artist"} . " - " . $songinfo{"Album"} . " - " . $songinfo{"Title"} . "1 @7 " . $minutes . ":" . $seconds;
 
     if( (scalar keys %songinfo) != 0 ){
 	return $title;
@@ -77,7 +112,17 @@ sub get_title{
     }
 }
 
-sub get_data{
+#\fn get_data_mpd
+#
+# Used to trigger an np in a window which may or may not be the active one
+#
+# @param $data placeholder variable
+# @param $server Irssi server object
+# @param $channel channel to send to
+# 
+# returns None
+
+sub get_data_mpd{
     my ($command) = @_;
 
     my @output;
@@ -92,7 +137,7 @@ sub get_data{
     }
 
     my $line = $socket->getline;
-
+    
     chomp $line;
 
     die "Not an mpd server -welcome string was [$line]\n"
@@ -123,10 +168,205 @@ sub get_data{
 }
 
 
+#\fn remote_npv
+#
+# Used to trigger a vlc np in a specified window
+#
+# @param $data placeholder variable
+# @param $server Irssi server object
+# @param $channel channel to send to
+# 
+# returns None
+
+sub remote_npv{
+    my($data, $server, $channel) = @_;
+
+    my @args = split(' ', $data);
+
+    if(scalar(@args) != 0){
+	foreach my $chan (@args){
+	    my $chan = channel_find($chan);
+	    local_npv("", $chan->{'server'}, $chan);
+	}
+    }
+}
+
+#\fn remote_np
+#
+# Used to trigger a vlc np in a window which may or may not be the active one
+#
+# @param $data placeholder variable
+# @param $server Irssi server object
+# @param $channel channel to send to
+# 
+# returns None
+
+sub local_npv{
+    my($data, $server, $channel) = @_;
+
+    my $title = get_np_vlc();
+
+    if($title ne ""){
+	if(defined($channel)){
+	    $server->command('action '.$channel->{'name'}.' '.$title.' '.$data);
+	}else{
+	    Irssi::print($title);
+	}
+    }
+}
+
+#\fn get_np_vlc
+#
+# used to assemble the 
+#
+# @param $data placeholder variable
+# @param $server Irssi server object
+# @param $channel channel to send to
+# 
+# returns None
+
+sub get_np_vlc{
+    my ($data, $server, $channel) = @_;
+
+    my ($return_value);
+
+    my @vlc_request = ();
+    push(@vlc_request, "title");
+    push(@vlc_request, "status");
+    push(@vlc_request, "time");
+    push(@vlc_request, "resolution");
+    
+
+    my $vlc_data = {};
+
+    $vlc_data = get_data_vlc( @vlc_request );
+
+    my $hours   = sprintf "%02d", $vlc_data->{"time"} / 3600;
+    my $minutes = sprintf "%02.0f", ($vlc_data->{"time"} % 3600) / 60;
+    my $seconds = sprintf "%02d", $vlc_data->{"time"} % 60;
+    
+    if($vlc_data->{"title"} ne ''){
+	$return_value = "3watches 9".$vlc_data->{"title"}." 3[".$vlc_data->{"resolution"}."]"."1 @7 ".$hours.":".$minutes.":".$seconds;
+    }else{
+	$return_value = "3watches 9nothing!";
+    }
+}
+
+
+#\fn get_data_vlc
+#
+# Retreives the data from the named XML file via the VLC http interface
+#
+# @tags an array of tags to search for and return the data of
+# 
+# returns Hashref containing the tag => data pairs
+
+sub get_data_vlc{
+    my(@tags) = @_;
+
+    my $xml_doc;
+
+    my $return_value = {};
+    
+    my $req = HTTP::Request->new('GET',$script_config::np_VLC_URL);
+
+    $req->authorization_basic("",$script_config::np_VLC_PASS);
+
+    my $ua = LWP::UserAgent->new;
+
+    my $response = $ua->request($req);
+
+    if(!$response->is_error()){
+	my $xml_doc = XMLin($response->decoded_content);
+
+	foreach(@tags){
+	    $return_value->{$_} = $xml_doc->{$_};
+	}
+    }
+    
+    return $return_value;
+
+}
+
+
+#\fn find_data_at_depth
+#
+# Searches the tree using the hashref passed as the root of the xml document. Not used,
+# may be implemented later for fun.
+#
+# returns None
+
+#sub find_data_at_depth{
+#    my($xml_hash, $element, $attribute, $value) = @_;
+    
+#    if($i == 25)
+#    {
+#	return 26;
+#    }
+
+#    Irssi::print(Dumper(keys $xml_hash));    
+
+#    for my $key (keys $xml_hash){
+
+#	if(ref($xml_hash->{$key}) eq "HASH"){
+#	    if($key eq $element){
+#		$element = "";
+#	    }
+
+#	    if($key eq $attribute){
+#		$attribute = "";
+#	    }
+
+#	    if($key eq $value){
+#		$value = "";
+#	    }
+
+	    #Irssi::print($xml_hash->{$key});
+	    #Irssi::print("    ".$element);
+	    #Irssi::print("    ".$attribute);
+	    #Irssi::print("    ".$value);
+	       
+#	    my $vlc_data = find_data_at_depth($xml_hash->{$key}, $element, $attribute, $value);
+	    
+#	    if($vlc_data ne ""){
+#		return $vlc_data;
+#	    }
+
+#	}elsif(ref($xml_hash->{$key}) eq "SCALAR"){
+#	    if( ($element == "") &&
+#		($attribute == "") &&
+#		($value == "" )){
+		
+		#Irssi::print($xml_hash->{$key});
+#		Irssi::print("bam");
+#	        return $xml_hash->{$key};
+#	    }
+#	}
+
+#    }
+#}
+    
 		
 #local np: binds /np to display the title in the current window
 command_bind('np', 'local_np');
 
+#local npv: binds /npv to display the info for VLC
+if($script_config::np_VLC){
+    command_bind('npv', 'local_npv');
+}
+
 #remote np: bind /npr to display the currently playing track in 
 #whatever channel windows are listed
 command_bind('npr', 'remote_np');
+
+#remote npv: bind /npv to display the info for VLC in whatever channel
+#windows are listed
+if($script_config::np_VLC){
+    command_bind('nprv', 'remote_npv');
+}
+
+#this refreshes the script_config.pm module, meaning you don't need reload
+#all of irssi just to test a new configuration variable
+my $refresher = Module::Refresh->new;
+$refresher->refresh_module('script_config.pm');
+
