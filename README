@@ -3,24 +3,39 @@ A bunch of IRC scripts and a couple helper scripts:
 These are best used by leaving this all in a directory, then symlinking where you want them, except for the config file, which needs to be copied into your ~/.irssi/scripts directory, and configured as described in the documentation.
 
 ip.pl - Resolve a DNS to an IP address.  Still a bit broken.  Will fix in the future.
-nt.pl - "#this script will eventually be used for nick tracking by sicklebot"
-ut.pl - Outputs the uptime of the system it is running on.  Retrieved from /proc/uptime.
+nt.pl - "this script will eventually be used for nick tracking by sicklebot"
+ut.pl - Outputs the uptime of the system it is running on.  Retrieved from /proc/uptime.  Can also be configured to get uptime by running a script on a remote machine.
 tt.pl - Various text triggers for some ascii character (Look of Disapproval, tableflip, etc.)
 sr.pl - Size report.  Lists in IRC the output of df -h.  Will make it a bit more modular soon enough.
 sd.pl - Self Defence.  Stops the violence.
 rt.pl - rTorrent upload/download speeds.  The helper script rtorrent-rate.sh handles the heavy lifting,	and the xmlrpc2sgci.2.py handles all the backend.
 io.pl - iostat output in IRC
 ap.pl - advanced self defence.
-np.pl - Allows for displaying of the current track playing in an mpd player.  Allows for either display	in the current window (/np) or a list of windows for it to be sent to (/npr).  A helper script is included to demonstrate how it can be triggered remotely using screen and ssh.
+np.pl - Allows for displaying of the current track playing in an mpd player.  Allows for either display	in the current window (/np) or a list of windows for it to be sent to (/npr).  A helper script is included to demonstrate how it can be triggered remotely using screen and ssh. Also allows for retrieval and output of the currently playing item in VLC as well in a similar way (/npv and /nprv).
 misc.pl - Various useful commands.  In this case, just /lod (outputs the Look of Disapproval)
 ident.pl - Does multi-server identification, with different usernames and authorization mechanisms. Automatic grouping and ungrouping is not working atm.  Might be in the future, might not be.
-di.pl - Dice script. Space delimited list of options, randomly chooses between them.  For those who have too much on the go and cannot decide on something to do...
+di.pl - Dice script. Space or comma delimited list of options, randomly chooses between them.  For those who have too much on the go and cannot decide on something to do...
+dd.pl - Uses the ddate function to get the current discordian date
 tf.pl - When things get hairy, and tables get flipped, someone needs to keep order and peace.  Install this script to have someone take care of cleaning up automatically.
 net.pl - Current network IO.
 hlp.pl - Help.  Provides help on the installed commands.  Sorta useless atm.
-ul.pl - URL lookup and shortening.  There are many like it, but this one is my own.  You can PM if you just want a shortened URL, also provides per-channel statistics for the url database.
-script_config.pm - perl module to configure the scripts which need configuring.
+ul.pl - URL lookup and shortening.  There are many like it, but this one is my own.  You can PM if you just want a shortened URL, also provides per-channel statistics for the url database, and detects the mime-type before doing a full download of the file (which may crash the bot)
+script_config.pm - perl module to provide central configuration for scripts which have personal/private data which needs storing
 
 /helpers/mpd_np - handles the screen registers stuff required for remote triggering of /np
 /helpers/rtorrent-rate.sh - gets the upload or download rate of an rtorrent instance
 /helpers/xmlrpc2scgi.2.py - helper script for rtorrent-rate.sh.  Does all the magic.
+irssi.xml - xml with lua preproccessor designed for use with VLC's http interface.
+
+HOW TO USE irssi.xml:
+
+1.  setup VLC to add the http interface to the regular interfaces, add a password at the menu, and put it on a port you want to use (default 8080)
+3.  If irssi and VLC are on the same machine, you're ready for the next step to go, otherwise:
+3b. Edit /etc/vlc/lua/http/.hosts and add the ip addresses you want it to listen on (for instance if your lan ip is 192.168.1.1 then you'll add a line 192.168.1.1 and 127.0.0.1 (localhost is always a good idea to keep enabled...)
+4.  copy irssi.xml to /usr/local/share/vlc/lua/http/requests
+5.  set $np_VLC_URL to the machine name that VLC runs on plus "/requests/irssi.xml". For instance, assuming the default values: 'http://127.0.0.1:8080/requests/irssi.xml' would be what that value should be.
+6.  Run vlc!
+7.  Reload script/reload Irssi.
+8.  now use /npv or /nprv
+
+NOTE: you may want to add firewall rules to port 8080, as there are control methods available which can be exploited mess things up.
