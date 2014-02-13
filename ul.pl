@@ -13,6 +13,7 @@ use Cwd;
 
 use POSIX qw(strftime);
 
+use Module::Refresh;
 
 use threads;
 
@@ -388,3 +389,8 @@ Irssi::command_bind('setupdb', \&setup_db);
 #Irssi::signal_add('message public',\&url_stats);
 #Irssi::signal_add('message private',\&url_stats);
 Irssi::command_bind('test', \&url_stats);
+
+#this refreshes the script_config.pm module, meaning you don't need reload
+#all of irssi just to test a new configuration variable
+my $refresher = Module::Refresh->new;
+$refresher->refresh_module('script_config.pm');

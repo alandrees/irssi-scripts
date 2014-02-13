@@ -5,6 +5,7 @@ use script_config;
 use vars qw($VERSION %IRSSI %ALIASES);
 use Irssi qw(command_bind signal_add);
 
+use Module::Refresh;
 $VERSION = '1.00';
 %IRSSI = (
         authors         => 'Alan Drees',
@@ -85,3 +86,8 @@ sub _sizereport{
 }
       	
 signal_add("message public", "_sizereport");
+
+#this refreshes the script_config.pm module, meaning you don't need reload
+#all of irssi just to test a new configuration variable
+my $refresher = Module::Refresh->new;
+$refresher->refresh_module('script_config.pm');

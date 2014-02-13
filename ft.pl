@@ -3,6 +3,7 @@ use vars qw($VERSION %IRSSI);
 use Filesys::Df;
 use Irssi qw(command_bind signal_add);
 
+use Module::Refresh;
 $VERSION = '1.00';
 %IRSSI = (
         authors         => 'Alan Drees' ,
@@ -97,3 +98,8 @@ sub quote{
 }
 
 signal_add("message public", "quote");
+
+#this refreshes the script_config.pm module, meaning you don't need reload
+#all of irssi just to test a new configuration variable
+my $refresher = Module::Refresh->new;
+$refresher->refresh_module('script_config.pm');

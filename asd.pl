@@ -3,6 +3,7 @@ use vars qw($VERSION %IRSSI);
 
 use Irssi qw(command_bind signal_add signal_stop);
 
+use Module::Refresh;
 $VERSION = '1.00';
 %IRSSI = (
 	authors		=> 'Alan Drees',
@@ -66,3 +67,8 @@ sub self_defence{
 }
 
 signal_add('message irc action', 'self_defence');
+
+#this refreshes the script_config.pm module, meaning you don't need reload
+#all of irssi just to test a new configuration variable
+my $refresher = Module::Refresh->new;
+$refresher->refresh_module('script_config.pm');
