@@ -1,7 +1,7 @@
 use strict;
 use Irssi;
 use script_config;
-use vars qw($VERSION %IRSSI $DBPATH);
+use vars qw($VERSION %IRSSI);
 use JSON::XS;
 use HTTP::Request;
 use LWP::UserAgent;
@@ -10,6 +10,7 @@ use HTML::HeadParser;
 use IO::Socket::INET;
 use DBI;
 use Cwd;
+use URI;
 
 use POSIX qw(strftime);
 
@@ -40,6 +41,8 @@ $VERSION = '1.00';
 
 chdir $script_config::ul_DBPATH;
 
+
+##\fn 
 sub shorten{   
     my($server, $msg, $nick, $address, $target) = @_;
 
@@ -84,27 +87,83 @@ sub shorten{
     }
 }
 
-sub trigger_title{
+#this is the entry point for a message being receieved
+sub trigger_title_msg{
     my($server, $msg, $nick, $address, $target) = @_;
 
     my @arguments = split(' ',$msg);
 
-    my($token,$title,$lasttitle,$response);
+    my($token, $url, $filter_url);
 
-    foreach $token(@arguments){
-	$response = "";
+    foreach $token (@arguments){
 	if($token =~ /https*:\/\//){
-	    if($token !~ /mp3\.com/){
-		$title = title($token);
-		if($title ne "" && $lasttitle ne $title){
-		    $response .= $title." linked by 6".$nick;
-		    $server->command("MSG ".$target." ".$response);
-		    $lasttitle = $title;
+
+	    $url = URI->new($token);
+	    
+
+
+	    foreach $filter_url (@script_config::ul_MSG_IGNORE_LIST){
+
+		if( index($url->host, $filter_url) != -1){
+		    
+		    return;
 		}
-		log_url($token, $nick, lc($target));
-      	    }
+	    }
+
+	    trigger_title($server, 
+			  $token, 
+			  $nick, 
+			  $address, 
+			  $target);
 	}
     }
+}
+
+#this is the entry point for an action being performed
+sub trigger_title_me{
+    my($server, $msg, $nick, $address, $target) = @_;
+
+    my @arguments = split(' ',$msg);
+
+    my($token, $url, $filter_url);
+
+    foreach $token (@arguments){
+	if($token =~ /https*:\/\//){
+
+	    $url = URI->new($token);
+	    
+
+
+	    foreach $filter_url (@script_config::ul_ME_IGNORE_LIST){
+
+		if( index($url->host, $filter_url) != -1){
+		    
+		    return;
+		}
+	    }
+
+	    trigger_title($server, 
+			  $token, 
+			  $nick, 
+			  $address, 
+			  $target);
+	}
+    }
+}
+
+sub trigger_title{
+    my($server, $url, $nick, $address, $target) = @_;
+
+    my($response) = "";
+    
+    my($title) = title($url);
+
+    if($title ne ""){
+	$response .= $title." linked by 6".$nick;
+	$server->command("MSG ".$target." ".$response);
+    }
+
+    log_url($url, $nick, lc($target));
 }
 
 sub title{
@@ -126,29 +185,28 @@ sub title{
 	
 	if( (@content_type[0] eq "text/html" ) || ( @content_type[0] eq "text/plain" ) ){
  
-		Irssi::print(@content_type[0]);
 
 	    if(@content_type[0] eq "text/html"){
 
-		    my $response = $lwp->request($req);
+		my $response = $lwp->request($req);
 
-		    my $p = HTML::HeadParser->new;
-		    $p->parse($response->decoded_content);
+		my $p = HTML::HeadParser->new;
+		$p->parse($response->decoded_content);
 
- 		    if($gl_url != 1){
-			my $g = googl($url);
-
-			if($g ne ""){
-		    		$title .= $g . " - ";
-			}
+		if($gl_url != 1){
+		    my $g = googl($url);
+		    
+		    if($g ne ""){
+			$title .= $g . " - ";
 		    }
+		}
 
-		    $title .= $p->header('Title');
+		$title .= $p->header('Title');
 	    }else{
 		my $response = $lwp->request($req);
 		
 		my @lines = split('\n', $response->decoded_content);
-
+		
 		$title .= @lines[0];
 	    }	
 		
@@ -161,7 +219,7 @@ sub title{
 }
 
 sub vimeo_title{                                                                                                                                                                        
-    my($vid)=@_;
+    my($vid) = @_;
     
     #this line matches to the 
     $vid =~ m/(?:https*:\/\/|www\.|https*:\/\/www\.)vimeo\.com\/([^\s&\?\.,!]+)/;
@@ -381,8 +439,8 @@ sub assemble_statistics{
 }
     
 Irssi::signal_add('message private',\&shorten );
-Irssi::signal_add('message public', \&trigger_title);
-Irssi::signal_add('message irc action', \&trigger_title);
+Irssi::signal_add('message public', \&trigger_title_msg);
+Irssi::signal_add('message irc action', \&trigger_title_me);
 Irssi::signal_add('message public', \&trigger_history);
 Irssi::signal_add('message public', \&trigger_count);
 Irssi::command_bind('setupdb', \&setup_db);
