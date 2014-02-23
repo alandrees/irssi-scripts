@@ -351,7 +351,7 @@ sub setup_db{
     Irssi::print("Database Created");
 }
 
-sub trigger_history{
+sub trigger_command{
     my($server, $msg, $nick, $address, $target) = @_;
 
     my @arguments = split(' ',$msg);
@@ -359,7 +359,7 @@ sub trigger_history{
     my @urllist;
     if($arguments[0] eq '!url'){
 	if(length(@arguments) == 1){
-	    my %query = ('query' => "select * from `urlist` where `channel` = '".$target."' order by id desc limit 10;");
+	    my %query = ('query' => "SELECT * FROM `urlist` WHERE `channel` = '".$target."' ORDER BY id DESC LIMIT 10;");
 
 	    @urllist = get_url_list(%query);
 	    
@@ -369,8 +369,45 @@ sub trigger_history{
 		}
 	    }
 	}
-    }
+    }elsif($arguments[0] eq '!top10'){
+	my %query = ('query' => "SELECT DISTINCT url FROM `urlist` WHERE `channel` = '".$target."'");
 
+	my %toplist = ();
+
+	my $uri;
+
+	my $urllist;
+
+	@urllist = get_url_list(%query);
+
+	foreach my $url(@urllist){
+	    if($url =~ /^https*:\/\//){
+
+		$uri = URI->new($url);
+
+		if ( exists($toplist{$uri->host}) ){
+		    $toplist{$uri->host}++;
+		}else{
+		    $toplist{$uri->host} = 1;
+		}
+
+	    }
+	}
+
+	my $i = 0;
+
+	my @keys = sort {$toplist{$b} <=> $toplist{$a} } keys %toplist;
+
+	foreach( @keys ){
+	    if ($i < 10){
+		$server->command("MSG ".$target." ".$_.": ".$toplist{$_});
+		$i++;
+	    }else{
+		last;
+	    }
+	}
+	    
+    }
 	#case for help
 
         #case for providing a user
@@ -442,7 +479,7 @@ sub url_count{
     my($query, $db, $qr, $result);
 
     my $db = DBI->connect("dbi:SQLite:dbname=".$script_config::ul_DBPATH,"","");
-    $query = "SELECT COUNT(id) AS count FROM urlist;";
+    $query = "SELECT DISTINCT COUNT(url) AS count FROM urlist;";
 
     $qr = $db->prepare($query);
 
@@ -473,7 +510,7 @@ sub assemble_statistics{
 Irssi::signal_add('message private',\&shorten );
 Irssi::signal_add('message public', \&trigger_title_msg);
 Irssi::signal_add('message irc action', \&trigger_title_me);
-Irssi::signal_add('message public', \&trigger_history);
+Irssi::signal_add('message public', \&trigger_command);
 Irssi::signal_add('message public', \&trigger_count);
 Irssi::command_bind('setupdb', \&setup_db);
 #Irssi::signal_add('message public',\&url_stats);
