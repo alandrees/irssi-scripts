@@ -9,8 +9,10 @@ use LWP::Simple;
 use HTML::HeadParser;
 use IO::Socket::INET;
 use DBI;
+use DBI qw(:sql_types);
 use Cwd;
 use URI;
+use Data::Dumper;
 
 use POSIX qw(strftime);
 
@@ -156,11 +158,17 @@ sub trigger_title{
 
     my($response) = "";
     
-    my($title) = title($url);
+    my $title = title($url);
+
+    my $repost = build_repost_string($url, $target);
 
     if($title ne ""){
 	$response .= $title." linked by 6".$nick;
 	$server->command("MSG ".$target." ".$response);
+    }
+
+    if($response ne ""){
+	$server->command("MSG ".$target." ".$repost);
     }
 
     log_url($url, $nick, lc($target));
@@ -279,6 +287,19 @@ sub youtube_title {
     return '0YOU4TUBE - 14'.$title.'';
 }
 
+sub build_repost_string{
+    my($url, $channel) = @_;
+
+    my $repost_data = check_for_repost($url, $channel);
+
+    if(exists $repost_data->{'nick'}){
+    	return "4<<REPOST ALERT>>7 ".$repost_data->{'nick'}." 7@7 ".strftime("%e/%m/%Y %T", gmtime($repost_data->{'date'}))." 4<<REPOST ALERT>>";
+    }else{
+	return "";
+    }
+}
+
+
 sub googl{
     my($data) = @_;
 
@@ -292,9 +313,9 @@ sub googl{
 
     my $lwp = LWP::UserAgent->new;
     my $response = $lwp->request($req);
-    
+
     my $js = decode_json $response->decoded_content;
-    
+
     if($js->{id}){
 	return $js->{id};
     }
@@ -306,7 +327,7 @@ sub log_url{
     $db->quote($url);
     $db->quote($nick);
     $db->quote($channel);
-    
+
     my $query = "INSERT INTO urlist (`url`,`nick`,`date`,`channel`) VALUES('".$url."','".$nick."',strftime('%s'),'".$channel."');";
     my $qh = $db->prepare($query);
 
@@ -319,7 +340,13 @@ sub setup_db{
     my($data, $server, $witem) = @_;
     my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH,"" ,"");
     
-    $db->do("CREATE TABLE urlist (id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT, nick TEXT, date INTEGER, channel TEXT);");
+    my($query) = "";
+
+    $query = 
+	"CREATE TABLE ".
+	"urlist (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT, nick TEXT, date INTEGER, channel TEXT);";
+
+    $db->do($query);
     $db->disconnect();
     Irssi::print("Database Created");
 }
@@ -342,7 +369,7 @@ sub trigger_history{
 		}
 	    }
 	}
-
+    }
 
 	#case for help
 
@@ -357,35 +384,40 @@ sub trigger_history{
 	#case for no options, just list the 5 or 10 previous URLs
 
 	#output: limit the maximum output of urls to a reasonable number, and private message the rest... have a hard limit so as to not slow things down too much
-	
-    }
 
 }
 
 sub check_for_repost{
     my($url, $channel) = @_;
 
-    my $db = DBI->connect( "dbi:SqLite:dbname=".$script_config::ul_DBPATH, "","", {RaiseError => 1, AutoCommit => 1} );
+    my $row = {};
 
-    my(%query, $qh, @record, @records);
+    my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH, 
+			   "" , 
+			   "", 
+			   {AutoCommit => 1, 
+			    RaiseError => 1});
 
-    %query = (query => "SELECT * FROM `urllist` WHERE `channel` = '".$channel."' AND `url` = '".$url."';");
 
-    $qh = $db->prepare(%query);
+    #my $query = "SELECT * FROM `urlist` WHERE `channel` = ? AND `url` = ? ORDER BY date LIMIT 1";
+
+    my $query = "SELECT * FROM `urlist` WHERE `channel` = ? AND `url` = ? ORDER BY date LIMIT 1";
+    
+    my $qh = $db->prepare($query);
+    
+    $qh->bind_param(1, $channel);
+    $qh->bind_param(2, $url);
+
     $qh->execute();
+    
+    if(! ($row = $qh->fetchrow_hashref() ) ){
+	$db->disconnect();
+	return {};
+    }
 
-    #check to see if it has been posted before
-
-    #return the date and user who posted it before
-
-    return;
+    return $row;
 }
-
-
     
-
-    
-
 sub get_url_list{
     my(%options) = @_;
     
@@ -410,7 +442,7 @@ sub url_count{
     my($query, $db, $qr, $result);
 
     my $db = DBI->connect("dbi:SQLite:dbname=".$script_config::ul_DBPATH,"","");
-    $query = "SELECT COUNT(id) FROM urlist;";
+    $query = "SELECT COUNT(id) AS count FROM urlist;";
 
     $qr = $db->prepare($query);
 
