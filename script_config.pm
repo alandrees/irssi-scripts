@@ -34,7 +34,7 @@ our $np_VLC = 1;
 our $np_VLC_URL = "http://127.0.0.1:8080/requests/irssi.xml";
 
 #password for accessing the VLC web interface
-our $np_VLC_PASS = "password"
+our $np_VLC_PASS = "password";
 
 
 
