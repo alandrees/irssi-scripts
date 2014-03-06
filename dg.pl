@@ -30,7 +30,7 @@ sub self_defence{
 	}else{
 	    $response = $responses[$index].' '.$msg;
 
-	    $response =~ s/$server->{nick} *//i;
+	    $response =~ s/[\s]*$server->{nick}('s)*[\s]*/ /i;
 
 	}
 
