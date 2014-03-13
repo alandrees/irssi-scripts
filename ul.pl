@@ -105,9 +105,7 @@ sub trigger_title_msg{
 
 
 	    foreach $filter_url (@script_config::ul_MSG_IGNORE_LIST){
-
-		if( index($url->host, $filter_url) != -1){
-		    
+                if( $url->host =~ m/$filter_url$/ ){	    
 		    return;
 		}
 	    }
@@ -137,9 +135,7 @@ sub trigger_title_me{
 
 
 	    foreach $filter_url (@script_config::ul_ME_IGNORE_LIST){
-
-		if( index($url->host, $filter_url) != -1){
-		    
+                if( $url->host =~ m/$filter_url$/ ){	    
 		    return;
 		}
 	    }
