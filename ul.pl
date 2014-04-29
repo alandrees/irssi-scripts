@@ -1,7 +1,7 @@
 use strict;
 use Irssi;
 use script_config;
-use vars qw($VERSION %IRSSI $DBPATH);
+use vars qw($VERSION %IRSSI);
 use JSON::XS;
 use HTTP::Request;
 use LWP::UserAgent;
@@ -9,7 +9,10 @@ use LWP::Simple;
 use HTML::HeadParser;
 use IO::Socket::INET;
 use DBI;
+use DBI qw(:sql_types);
 use Cwd;
+use URI;
+use Data::Dumper;
 
 use POSIX qw(strftime);
 
@@ -40,6 +43,8 @@ $VERSION = '1.00';
 
 chdir $script_config::ul_DBPATH;
 
+
+##\fn 
 sub shorten{   
     my($server, $msg, $nick, $address, $target) = @_;
 
@@ -84,27 +89,85 @@ sub shorten{
     }
 }
 
-sub trigger_title{
+#this is the entry point for a message being receieved
+sub trigger_title_msg{
     my($server, $msg, $nick, $address, $target) = @_;
 
     my @arguments = split(' ',$msg);
 
-    my($token,$title,$lasttitle,$response);
+    my($token, $url, $filter_url);
 
-    foreach $token(@arguments){
-	$response = "";
+    foreach $token (@arguments){
 	if($token =~ /https*:\/\//){
-	    if($token !~ /mp3\.com/){
-		$title = title($token);
-		if($title ne "" && $lasttitle ne $title){
-		    $response .= $title." linked by 6".$nick;
-		    $server->command("MSG ".$target." ".$response);
-		    $lasttitle = $title;
+
+	    $url = URI->new($token);
+	    
+
+
+	    foreach $filter_url (@script_config::ul_MSG_IGNORE_LIST){
+                if( $url->host =~ m/$filter_url$/ ){	    
+		    return;
 		}
-		log_url($token, $nick, lc($target));
-      	    }
+	    }
+
+	    trigger_title($server, 
+			  $token, 
+			  $nick, 
+			  $address, 
+			  $target);
 	}
     }
+}
+
+#this is the entry point for an action being performed
+sub trigger_title_me{
+    my($server, $msg, $nick, $address, $target) = @_;
+
+    my @arguments = split(' ',$msg);
+
+    my($token, $url, $filter_url);
+
+    foreach $token (@arguments){
+	if($token =~ /https*:\/\//){
+
+	    $url = URI->new($token);
+	    
+
+
+	    foreach $filter_url (@script_config::ul_ME_IGNORE_LIST){
+                if( $url->host =~ m/$filter_url$/ ){	    
+		    return;
+		}
+	    }
+
+	    trigger_title($server, 
+			  $token, 
+			  $nick, 
+			  $address, 
+			  $target);
+	}
+    }
+}
+
+sub trigger_title{
+    my($server, $url, $nick, $address, $target) = @_;
+
+    my($response) = "";
+    
+    my $title = title($url);
+
+    my $repost = build_repost_string($url, $target);
+
+    if($title ne ""){
+	$response .= $title." linked by 6".$nick;
+	$server->command("MSG ".$target." ".$response);
+    }
+
+    if($response ne ""){
+	$server->command("MSG ".$target." ".$repost);
+    }
+
+    log_url($url, $nick, lc($target));
 }
 
 sub title{
@@ -126,29 +189,28 @@ sub title{
 	
 	if( (@content_type[0] eq "text/html" ) || ( @content_type[0] eq "text/plain" ) ){
  
-		Irssi::print(@content_type[0]);
 
 	    if(@content_type[0] eq "text/html"){
 
-		    my $response = $lwp->request($req);
+		my $response = $lwp->request($req);
 
-		    my $p = HTML::HeadParser->new;
-		    $p->parse($response->decoded_content);
+		my $p = HTML::HeadParser->new;
+		$p->parse($response->decoded_content);
 
- 		    if($gl_url != 1){
-			my $g = googl($url);
-
-			if($g ne ""){
-		    		$title .= $g . " - ";
-			}
+		if($gl_url != 1){
+		    my $g = googl($url);
+		    
+		    if($g ne ""){
+			$title .= $g . " - ";
 		    }
+		}
 
-		    $title .= $p->header('Title');
+		$title .= $p->header('Title');
 	    }else{
 		my $response = $lwp->request($req);
 		
 		my @lines = split('\n', $response->decoded_content);
-
+		
 		$title .= @lines[0];
 	    }	
 		
@@ -161,7 +223,7 @@ sub title{
 }
 
 sub vimeo_title{                                                                                                                                                                        
-    my($vid)=@_;
+    my($vid) = @_;
     
     #this line matches to the 
     $vid =~ m/(?:https*:\/\/|www\.|https*:\/\/www\.)vimeo\.com\/([^\s&\?\.,!]+)/;
@@ -221,6 +283,19 @@ sub youtube_title {
     return '0YOU4TUBE - 14'.$title.'';
 }
 
+sub build_repost_string{
+    my($url, $channel) = @_;
+
+    my $repost_data = check_for_repost($url, $channel);
+
+    if(exists $repost_data->{'nick'}){
+    	return "4<<REPOST ALERT>>7 ".$repost_data->{'nick'}." 7@7 ".strftime("%e/%m/%Y %T", gmtime($repost_data->{'date'}))." 4<<REPOST ALERT>>";
+    }else{
+	return "";
+    }
+}
+
+
 sub googl{
     my($data) = @_;
 
@@ -234,9 +309,9 @@ sub googl{
 
     my $lwp = LWP::UserAgent->new;
     my $response = $lwp->request($req);
-    
+
     my $js = decode_json $response->decoded_content;
-    
+
     if($js->{id}){
 	return $js->{id};
     }
@@ -248,7 +323,7 @@ sub log_url{
     $db->quote($url);
     $db->quote($nick);
     $db->quote($channel);
-    
+
     my $query = "INSERT INTO urlist (`url`,`nick`,`date`,`channel`) VALUES('".$url."','".$nick."',strftime('%s'),'".$channel."');";
     my $qh = $db->prepare($query);
 
@@ -261,12 +336,18 @@ sub setup_db{
     my($data, $server, $witem) = @_;
     my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH,"" ,"");
     
-    $db->do("CREATE TABLE urlist (id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT, nick TEXT, date INTEGER, channel TEXT);");
+    my($query) = "";
+
+    $query = 
+	"CREATE TABLE ".
+	"urlist (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT, nick TEXT, date INTEGER, channel TEXT);";
+
+    $db->do($query);
     $db->disconnect();
     Irssi::print("Database Created");
 }
 
-sub trigger_history{
+sub trigger_command{
     my($server, $msg, $nick, $address, $target) = @_;
 
     my @arguments = split(' ',$msg);
@@ -274,7 +355,7 @@ sub trigger_history{
     my @urllist;
     if($arguments[0] eq '!url'){
 	if(length(@arguments) == 1){
-	    my %query = ('query' => "select * from `urlist` where `channel` = '".$target."' order by id desc limit 10;");
+	    my %query = ('query' => "SELECT * FROM `urlist` WHERE `channel` = '".$target."' ORDER BY id DESC LIMIT 10;");
 
 	    @urllist = get_url_list(%query);
 	    
@@ -284,8 +365,45 @@ sub trigger_history{
 		}
 	    }
 	}
+    }elsif($arguments[0] eq '!top10'){
+	my %query = ('query' => "SELECT DISTINCT url FROM `urlist` WHERE `channel` = '".$target."'");
 
+	my %toplist = ();
 
+	my $uri;
+
+	my $urllist;
+
+	@urllist = get_url_list(%query);
+
+	foreach my $url(@urllist){
+	    if($url =~ /^https*:\/\//){
+
+		$uri = URI->new($url);
+
+		if ( exists($toplist{$uri->host}) ){
+		    $toplist{$uri->host}++;
+		}else{
+		    $toplist{$uri->host} = 1;
+		}
+
+	    }
+	}
+
+	my $i = 0;
+
+	my @keys = sort {$toplist{$b} <=> $toplist{$a} } keys %toplist;
+
+	foreach( @keys ){
+	    if ($i < 10){
+		$server->command("MSG ".$target." ".$_.": ".$toplist{$_});
+		$i++;
+	    }else{
+		last;
+	    }
+	}
+	    
+    }
 	#case for help
 
         #case for providing a user
@@ -299,35 +417,40 @@ sub trigger_history{
 	#case for no options, just list the 5 or 10 previous URLs
 
 	#output: limit the maximum output of urls to a reasonable number, and private message the rest... have a hard limit so as to not slow things down too much
-	
-    }
 
 }
 
 sub check_for_repost{
     my($url, $channel) = @_;
 
-    my $db = DBI->connect( "dbi:SqLite:dbname=".$script_config::ul_DBPATH, "","", {RaiseError => 1, AutoCommit => 1} );
+    my $row = {};
 
-    my(%query, $qh, @record, @records);
+    my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH, 
+			   "" , 
+			   "", 
+			   {AutoCommit => 1, 
+			    RaiseError => 1});
 
-    %query = (query => "SELECT * FROM `urllist` WHERE `channel` = '".$channel."' AND `url` = '".$url."';");
 
-    $qh = $db->prepare(%query);
+    #my $query = "SELECT * FROM `urlist` WHERE `channel` = ? AND `url` = ? ORDER BY date LIMIT 1";
+
+    my $query = "SELECT * FROM `urlist` WHERE `channel` = ? AND `url` = ? ORDER BY date LIMIT 1";
+    
+    my $qh = $db->prepare($query);
+    
+    $qh->bind_param(1, $channel);
+    $qh->bind_param(2, $url);
+
     $qh->execute();
+    
+    if(! ($row = $qh->fetchrow_hashref() ) ){
+	$db->disconnect();
+	return {};
+    }
 
-    #check to see if it has been posted before
-
-    #return the date and user who posted it before
-
-    return;
+    return $row;
 }
-
-
     
-
-    
-
 sub get_url_list{
     my(%options) = @_;
     
@@ -352,7 +475,7 @@ sub url_count{
     my($query, $db, $qr, $result);
 
     my $db = DBI->connect("dbi:SQLite:dbname=".$script_config::ul_DBPATH,"","");
-    $query = "SELECT COUNT(id) FROM urlist;";
+    $query = "SELECT DISTINCT COUNT(url) AS count FROM urlist;";
 
     $qr = $db->prepare($query);
 
@@ -381,9 +504,9 @@ sub assemble_statistics{
 }
     
 Irssi::signal_add('message private',\&shorten );
-Irssi::signal_add('message public', \&trigger_title);
-Irssi::signal_add('message irc action', \&trigger_title);
-Irssi::signal_add('message public', \&trigger_history);
+Irssi::signal_add('message public', \&trigger_title_msg);
+Irssi::signal_add('message irc action', \&trigger_title_me);
+Irssi::signal_add('message public', \&trigger_command);
 Irssi::signal_add('message public', \&trigger_count);
 Irssi::command_bind('setupdb', \&setup_db);
 #Irssi::signal_add('message public',\&url_stats);
