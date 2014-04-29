@@ -38,3 +38,6 @@ our $ul_DBPATH = "~/.irssi";
 
 #ut.pl
 our $uptime_command = "cat /proc/uptime | awk '{print $1}'";
+
+#up.pl
+our $ups_commands = ('upsname' => "command to execute to get the current load in watts");
