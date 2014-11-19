@@ -21,8 +21,9 @@ net.pl - Current network IO.
 hlp.pl - Help.  Provides help on the installed commands.  Sorta useless atm.
 ul.pl - URL lookup and shortening.  There are many like it, but this one is my own.  You can PM if you just want a shortened URL, also provides per-channel statistics for the url database, and detects the mime-type before doing a full download of the file (which may crash the bot)
 up.pl - APC UPS wattage draw display
-script_config.pm - perl module to provide central configuration for scripts which have personal/private data which needs storing
+rp.pl - Pick a random number between 1025 and 65535 (most useful for generating random ports :D)
 
+script_config.pm - perl module to provide central configuration for scripts which have personal/private data which needs storing
 
 /helpers/mpd_np - handles the screen registers stuff required for remote triggering of /np
 /helpers/rtorrent-rate.sh - gets the upload or download rate of an rtorrent instance
