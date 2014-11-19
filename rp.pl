@@ -15,12 +15,6 @@ $VERSION = '1.00';
         license         => 'GPLv3',
     );
 
-#it will use the keys here to create a list of mount points to add to the sizereport
-
-#mountpoint => (list of ailiases)
-#%ALIASES = ( '/mnt/data' => ['data','backups','sda1'],
-#	     '/mnt/local-data' => ['local-data','backups','sdd2'] );
-
 sub _randomport{
     my($server, $msg, $nick, $address, $target) = @_;
     my($port);
