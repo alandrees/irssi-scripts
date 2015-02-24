@@ -21,7 +21,7 @@ sub _resolve{
 
     if(lc($arguments[0]) eq '!ip'){
 	
-	$response = readpipe('host -t A '.$arguments[1].' | sed \'s/'.$arguments[1].' has address //\'');
+	$response = readpipe('dig +short "'.$arguments[1].'" | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b"');
 	$server->command('MSG '.$target.' '.''.$arguments[1].":4 ".$response);
     }
 }
