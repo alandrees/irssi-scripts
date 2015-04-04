@@ -163,7 +163,7 @@ sub trigger_title{
 	$server->command("MSG ".$target." ".$response);
     }
 
-    if($response ne ""){
+    if($response ne "" && $repost ne ""){
 	$server->command("MSG ".$target." ".$repost);
     }
 
