@@ -270,29 +270,6 @@ sub youtube_title {
 
     my $title = $js->{items}[0]->{snippet}->{title};
 
-#    my $sock = IO::Socket::INET->new(
-#	PeerAddr=>'gdata.youtube.com',
-#        PeerPort=>'http(80)',
-#        Proto=>'tcp',
-#	);
-
-#    my $req="GET /feeds/api/videos/$vid HTTP/1.0\r\n";
-#    $req.="host: gdata.youtube.com\r\n";
-#    #$req.="user-agent: $IRSSI{'name'}-$VERSION (irssi script)\r\n";
-#    $req.="\r\n";
-#
-#    my $title;
-
-#    print $sock $req;
-#    while(<$sock>) {
-#	if(/<media:title type='plain'>(.*)<\/media:title>/) {
-#	    close $sock;
-#           $title = $1;
-#	}
-#    }
-
-
-
     return '0YOU4TUBE - 14'.$title.'';
 }
 
