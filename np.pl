@@ -16,12 +16,12 @@ use Encode;
 $VERSION = '1.01';
 
 %IRSSI = (
-	authors		=> 'Alan Drees',
-	contact		=> 'alandrees@theselves.com',
-	name		=> 'Now Playing: mpd edition',
-	description	=> 'Displays the currently playing song retrieved from MPD, either on the same system or remotely.  Also allows for remote triggering, via screen registers.',
-	license		=> 'GPLv3',
-);
+    authors		=> 'Alan Drees',
+    contact		=> 'alandrees@theselves.com',
+    name		=> 'Now Playing: mpd edition',
+    description	=> 'Displays the currently playing song retrieved from MPD, either on the same system or remotely.  Also allows for remote triggering, via screen registers.',
+    license		=> 'GPLv3',
+    );
 
 
 #\fn remote_np
@@ -31,7 +31,7 @@ $VERSION = '1.01';
 # @param $data placeholder variable
 # @param $server Irssi server object
 # @param $channel channel to send to
-# 
+#
 # returns None
 
 sub remote_np{
@@ -54,7 +54,7 @@ sub remote_np{
 # @param $data placeholder variable
 # @param $server Irssi server object
 # @param $channel channel to send to
-# 
+#
 # returns None
 
 sub local_np{
@@ -78,16 +78,16 @@ sub local_np{
 # @param $data placeholder variable
 # @param $server Irssi server object
 # @param $channel channel to send to
-# 
+#
 # returns None
-		   
+
 sub get_np_mpd{
     my ($data, $server, $channel) = @_;
-    
+
     my %songinfo = get_data_mpd('currentsong');
-    
+
     my %statusinfo = get_data_mpd('status');
-    
+
     if($statusinfo{"state"} == "play"){
 	#do play stuff
     }elsif($statusinfo{"state"} == "pause"){
@@ -119,7 +119,7 @@ sub get_np_mpd{
 # @param $data placeholder variable
 # @param $server Irssi server object
 # @param $channel channel to send to
-# 
+#
 # returns None
 
 sub get_data_mpd{
@@ -137,19 +137,19 @@ sub get_data_mpd{
     }
 
     my $line = $socket->getline;
-    
+
     chomp $line;
 
     die "Not an mpd server -welcome string was [$line]\n"
 	if $line !~ /^OK MPD (.+)$/;
-	
+
     my $version = $1;
 
-    
-    $socket->print( encode("utf-8", $command."\n") );
-    
 
-          
+    $socket->print( encode("utf-8", $command."\n") );
+
+
+
     while (defined (my $line = $socket->getline)){
 	chomp $line;
 	last if $line =~ /^OK/;
@@ -157,13 +157,13 @@ sub get_data_mpd{
     }
 
     @lines = @output;
-    
+
     foreach my $line (reverse @lines){
 	my ($k, $v) = split /:\s/, $line, 2;
 	$param{$k} = $v;
 	next unless $k eq 'file' || $k eq 'directory' || $k eq 'playlist';
     }
-   
+
     return %param;
 }
 
@@ -175,7 +175,7 @@ sub get_data_mpd{
 # @param $data placeholder variable
 # @param $server Irssi server object
 # @param $channel channel to send to
-# 
+#
 # returns None
 
 sub remote_npv{
@@ -198,7 +198,7 @@ sub remote_npv{
 # @param $data placeholder variable
 # @param $server Irssi server object
 # @param $channel channel to send to
-# 
+#
 # returns None
 
 sub local_npv{
@@ -217,12 +217,12 @@ sub local_npv{
 
 #\fn get_np_vlc
 #
-# used to assemble the 
+# used to assemble the
 #
 # @param $data placeholder variable
 # @param $server Irssi server object
 # @param $channel channel to send to
-# 
+#
 # returns None
 
 sub get_np_vlc{
@@ -235,7 +235,7 @@ sub get_np_vlc{
     push(@vlc_request, "status");
     push(@vlc_request, "time");
     push(@vlc_request, "resolution");
-    
+
 
     my $vlc_data = {};
 
@@ -244,7 +244,7 @@ sub get_np_vlc{
     my $hours   = sprintf "%02d", $vlc_data->{"time"} / 3600;
     my $minutes = sprintf "%02.0f", ($vlc_data->{"time"} % 3600) / 60;
     my $seconds = sprintf "%02d", $vlc_data->{"time"} % 60;
-    
+
     if($vlc_data->{"title"} ne ''){
 	$return_value = "3watches 9".$vlc_data->{"title"}." 3[".$vlc_data->{"resolution"}."]"."1 @7 ".$hours.":".$minutes.":".$seconds;
     }else{
@@ -258,7 +258,7 @@ sub get_np_vlc{
 # Retreives the data from the named XML file via the VLC http interface
 #
 # @tags an array of tags to search for and return the data of
-# 
+#
 # returns Hashref containing the tag => data pairs
 
 sub get_data_vlc{
@@ -267,7 +267,7 @@ sub get_data_vlc{
     my $xml_doc;
 
     my $return_value = {};
-    
+
     my $req = HTTP::Request->new('GET',$script_config::np_VLC_URL);
 
     $req->authorization_basic("",$script_config::np_VLC_PASS);
@@ -283,70 +283,11 @@ sub get_data_vlc{
 	    $return_value->{$_} = $xml_doc->{$_};
 	}
     }
-    
+
     return $return_value;
 
 }
 
-
-#\fn find_data_at_depth
-#
-# Searches the tree using the hashref passed as the root of the xml document. Not used,
-# may be implemented later for fun.
-#
-# returns None
-
-#sub find_data_at_depth{
-#    my($xml_hash, $element, $attribute, $value) = @_;
-    
-#    if($i == 25)
-#    {
-#	return 26;
-#    }
-
-#    Irssi::print(Dumper(keys $xml_hash));    
-
-#    for my $key (keys $xml_hash){
-
-#	if(ref($xml_hash->{$key}) eq "HASH"){
-#	    if($key eq $element){
-#		$element = "";
-#	    }
-
-#	    if($key eq $attribute){
-#		$attribute = "";
-#	    }
-
-#	    if($key eq $value){
-#		$value = "";
-#	    }
-
-	    #Irssi::print($xml_hash->{$key});
-	    #Irssi::print("    ".$element);
-	    #Irssi::print("    ".$attribute);
-	    #Irssi::print("    ".$value);
-	       
-#	    my $vlc_data = find_data_at_depth($xml_hash->{$key}, $element, $attribute, $value);
-	    
-#	    if($vlc_data ne ""){
-#		return $vlc_data;
-#	    }
-
-#	}elsif(ref($xml_hash->{$key}) eq "SCALAR"){
-#	    if( ($element == "") &&
-#		($attribute == "") &&
-#		($value == "" )){
-		
-		#Irssi::print($xml_hash->{$key});
-#		Irssi::print("bam");
-#	        return $xml_hash->{$key};
-#	    }
-#	}
-
-#    }
-#}
-    
-		
 #local np: binds /np to display the title in the current window
 command_bind('np', 'local_np');
 
@@ -355,7 +296,7 @@ if($script_config::np_VLC){
     command_bind('npv', 'local_npv');
 }
 
-#remote np: bind /npr to display the currently playing track in 
+#remote np: bind /npr to display the currently playing track in
 #whatever channel windows are listed
 command_bind('npr', 'remote_np');
 
@@ -369,4 +310,3 @@ if($script_config::np_VLC){
 #all of irssi just to test a new configuration variable
 my $refresher = Module::Refresh->new;
 $refresher->refresh_module('script_config.pm');
-
