@@ -4,6 +4,7 @@ use script_config;
 use vars qw($VERSION %IRSSI);
 use JSON::XS;
 use HTTP::Request;
+use HTTP::Headers;
 use LWP::UserAgent;
 use LWP::Simple;
 use HTML::HeadParser;
