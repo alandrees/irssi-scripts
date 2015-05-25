@@ -16,7 +16,7 @@ sub self_defence{
     my ($server, $msg, $nick, $address, $target) = @_;
 
     srand(time);
-    
+
     my $selfnick = lc($server->{nick});
     my $index = int(rand(5));
     my $color = int(rand(15));
@@ -35,11 +35,11 @@ sub self_defence{
 	}
 
 	Irssi::print($index);
-	
 
-	$server->command('action '.$target.' '.$color.$response);	
+
+	$server->command('action '.$target.' '.$color.$response);
     }
-    
+
 }
 
 signal_add('message irc action', 'self_defence');
