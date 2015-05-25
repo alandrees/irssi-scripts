@@ -6,12 +6,12 @@ use Irssi qw(command_bind signal_add);
 use Module::Refresh;
 $VERSION = '1.0';
 %IRSSI = (
-        authors         => 'Alan Drees',
-        contact         => 'alandrees@theselves.com',
-        name            => 'iostat',
-        description     => 'HDD throughput statistics',
-        license         => 'GPLv3',
-);
+    authors => 'Alan Drees',
+    contact => 'alandrees@theselves.com',
+    name    => 'iostat',
+    description     => 'HDD throughput statistics',
+    license => 'GPLv3',
+    );
 
 sub _iostat{
     my($server, $msg, $nick, $address, $target) = @_;
@@ -22,7 +22,7 @@ sub _iostat{
     if(lc($arguments[0]) eq '!iostat'){
 	$response = readpipe("iostat -d | grep -A 4 Device | sed 's/sd/\\tsd/'");
 	my @lines = split(/\t/,$response);
-	
+
 	foreach(@lines){
 	    $server->command('MSG '.$target.' '.$_);
 	}
