@@ -8,11 +8,11 @@ use Irssi qw(command_bind signal_add);
 use Module::Refresh;
 $VERSION = '1.00';
 %IRSSI = (
-        authors         => 'Alan Drees',
-        contact         => 'alandrees@theselves.com',
-        name            => 'random port',
-        description     => 'Picks a random number between 1025 and 65535',
-        license         => 'GPLv3',
+    authors => 'Alan Drees',
+    contact => 'alandrees@theselves.com',
+    name    => 'random port',
+    description     => 'Picks a random number between 1025 and 65535',
+    license => 'GPLv3',
     );
 
 sub _randomport{
@@ -29,7 +29,7 @@ sub _randomport{
 
     }
 }
-      	
+
 signal_add("message public", "_randomport");
 
 #this refreshes the script_config.pm module, meaning you don't need reload
