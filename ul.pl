@@ -259,7 +259,16 @@ sub youtube_title {
     $vid =~ m/(?:https*:\/\/|www\.|https*:\/\/www\.)youtube\.com\/watch\?\S*v=([^\s&\?\.,!]+)/;
     $vid = $1;
 
+    $uri = $uri.$vid."&key=".$script_config::ul_YOUTUBE_API_KEY;
 
+    my $req = HTTP::Request->new('GET', $uri);
+
+    my $lwp = LWP::UserAgent->new;
+    my $response = $lwp->request($req);
+
+    my $js = decode_json $response->decoded_content;
+
+    my $title = $js->{items}[0]->{snippet}->{title};
 
 #    my $sock = IO::Socket::INET->new(
 #	PeerAddr=>'gdata.youtube.com',
