@@ -66,6 +66,9 @@ our $ul_MSG_IGNORE_LIST = ();
 #Server API key for youtube data
 our $ul_YOUTUBE_API_KEY = "";
 
+#Personal Access Token for vimeo.com API
+our $script_config::ul_VIMEO_AUTH_KEY = "";
+
 ###ut.pl###
 
 #the command to execute 4to get the uptime to be displayed in the channel
