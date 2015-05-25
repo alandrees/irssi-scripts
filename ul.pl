@@ -252,7 +252,9 @@ sub vimeo_title{
 
 sub youtube_title {
     my($vid)=@_;
-    
+
+    my $uri = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=";
+
     #this line matches to the last part of the url, the video id
     $vid =~ m/(?:https*:\/\/|www\.|https*:\/\/www\.)youtube\.com\/watch\?\S*v=([^\s&\?\.,!]+)/;
     $vid = $1;
