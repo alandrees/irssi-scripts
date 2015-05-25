@@ -224,8 +224,8 @@ sub title{
 
 sub vimeo_title{                                                                                                                                                                        
     my($vid) = @_;
-    
-    #this line matches to the 
+
+    #this line matches to the
     $vid =~ m/(?:https*:\/\/|www\.|https*:\/\/www\.)vimeo\.com\/([^\s&\?\.,!]+)/;
     $vid = $1;
 
@@ -245,8 +245,8 @@ sub vimeo_title{
                         close $sock;                                                                                                                                                     
                         $title = $1;
                 }                                                                                                                                                                        
-    }                                                                                                                                                                                 
-                                                                                                                                                                                         
+    }
+
     return '11vimeo - 14'.$title.'';
 }
 
