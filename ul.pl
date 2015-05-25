@@ -44,8 +44,8 @@ $VERSION = '1.00';
 chdir $script_config::ul_DBPATH;
 
 
-##\fn 
-sub shorten{   
+##\fn
+sub shorten{
     my($server, $msg, $nick, $address, $target) = @_;
 
     my @arguments = split(' ',$msg);
@@ -66,25 +66,25 @@ sub shorten{
 		$data .= $arguments[$count];
 	    }
 	}
-    
+
 	my $shortened = googl($data);
-        
+
 	if($js->{id}){
 	    #get the title if it's not a private link
 	    if($arguments[1] ne "-p"){
 		my $head = title($data);
 		$info .= " ".$head. " linked by 6".$nick;
 	    }
-	    
+
 	    $server->command("MSG ".$target." ".$js->{id}.$info);
 	    log_url($data, $nick, lc($target));
 
         }
-        else{   
+        else{
             Irssi::print("Some error occured trying to goo.gl that url! :(");
         }
     }
-    else{   
+    else{
         Irssi::print("No url to shorten!");
     }
 }
@@ -101,19 +101,19 @@ sub trigger_title_msg{
 	if($token =~ /https*:\/\//){
 
 	    $url = URI->new($token);
-	    
+
 
 
 	    foreach $filter_url (@script_config::ul_MSG_IGNORE_LIST){
-                if( $url->host =~ m/$filter_url$/ ){	    
+                if( $url->host =~ m/$filter_url$/ ){
 		    return;
 		}
 	    }
 
-	    trigger_title($server, 
-			  $token, 
-			  $nick, 
-			  $address, 
+	    trigger_title($server,
+			  $token,
+			  $nick,
+			  $address,
 			  $target);
 	}
     }
@@ -131,19 +131,19 @@ sub trigger_title_me{
 	if($token =~ /https*:\/\//){
 
 	    $url = URI->new($token);
-	    
+
 
 
 	    foreach $filter_url (@script_config::ul_ME_IGNORE_LIST){
-                if( $url->host =~ m/$filter_url$/ ){	    
+                if( $url->host =~ m/$filter_url$/ ){
 		    return;
 		}
 	    }
 
-	    trigger_title($server, 
-			  $token, 
-			  $nick, 
-			  $address, 
+	    trigger_title($server,
+			  $token,
+			  $nick,
+			  $address,
 			  $target);
 	}
     }
@@ -153,7 +153,7 @@ sub trigger_title{
     my($server, $url, $nick, $address, $target) = @_;
 
     my($response) = "";
-    
+
     my $title = title($url);
 
     my $repost = build_repost_string($url, $target);
@@ -173,7 +173,7 @@ sub trigger_title{
 sub title{
     my($url, $gl_url) = @_;
     my $title = "";
-    
+
     if($url=~ m/vimeo.com/){
 	$title = vimeo_title($url);
     }elsif($url=~ m/youtube.com/){
@@ -186,9 +186,9 @@ sub title{
 	my $mimetype = $lwp->head($url);
 
 	my @content_type = split(';',$mimetype->header('Content-Type'));
-	
+
 	if( (@content_type[0] eq "text/html" ) || ( @content_type[0] eq "text/plain" ) ){
- 
+
 
 	    if(@content_type[0] eq "text/html"){
 
@@ -199,7 +199,7 @@ sub title{
 
 		if($gl_url != 1){
 		    my $g = googl($url);
-		    
+
 		    if($g ne ""){
 			$title .= $g . " - ";
 		    }
@@ -208,12 +208,12 @@ sub title{
 		$title .= $p->header('Title');
 	    }else{
 		my $response = $lwp->request($req);
-		
+
 		my @lines = split('\n', $response->decoded_content);
-		
+
 		$title .= @lines[0];
-	    }	
-		
+	    }
+
 	}else{
 	    $title .= @content_type[0];
 	}
@@ -239,12 +239,12 @@ sub vimeo_title{
     $req.="\r\n";
     my $title;
 
-    print $sock $req;                                                                                                                                                                 
-    while(<$sock>) {                                                                                                                                                                  
-                if(/<title>(.*)<\/title>/) {                                                                                                                                             
-                        close $sock;                                                                                                                                                     
+    print $sock $req;
+    while(<$sock>) {
+                if(/<title>(.*)<\/title>/) {
+                        close $sock;
                         $title = $1;
-                }                                                                                                                                                                        
+                }
     }
 
     return '11vimeo - 14'.$title.'';
@@ -291,7 +291,7 @@ sub youtube_title {
 #	}
 #    }
 
-    
+
 
     return '0YOU4TUBE - 14'.$title.'';
 }
@@ -348,10 +348,10 @@ sub log_url{
 sub setup_db{
     my($data, $server, $witem) = @_;
     my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH,"" ,"");
-    
+
     my($query) = "";
 
-    $query = 
+    $query =
 	"CREATE TABLE ".
 	"urlist (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT, nick TEXT, date INTEGER, channel TEXT);";
 
@@ -371,7 +371,7 @@ sub trigger_command{
 	    my %query = ('query' => "SELECT * FROM `urlist` WHERE `channel` = '".$target."' ORDER BY id DESC LIMIT 10;");
 
 	    @urllist = get_url_list(%query);
-	    
+
 	    if ( (scalar(@urllist) % 5) == 0){
 		while( my ($did, $durl, $dnick, $ddate, $channel) = splice(@urllist,0,5)){
 		    $server->command("MSG " . $nick . " " . googl($durl) ." - " . title($durl,1) ." linked by  6". $dnick ." on ". strftime "%e/%m/%Y %T", gmtime($ddate));
@@ -415,17 +415,17 @@ sub trigger_command{
 		last;
 	    }
 	}
-	    
-    }
-	#case for help
 
-        #case for providing a user
+    }
+    #case for help
+
+    #case for providing a user
 
 	#case for providing a date, or a date and a range, or a word "last week", "today", "yesterday"
 
-	#case for providing a domain, and searching by domain
+    #case for providing a domain, and searching by domain
 
-	#case for providing a number to display, or a number and a range
+    #case for providing a number to display, or a number and a range
 
 	#case for no options, just list the 5 or 10 previous URLs
 
@@ -438,24 +438,24 @@ sub check_for_repost{
 
     my $row = {};
 
-    my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH, 
-			   "" , 
-			   "", 
-			   {AutoCommit => 1, 
+    my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH,
+			   "" ,
+			   "",
+			   {AutoCommit => 1,
 			    RaiseError => 1});
 
 
     #my $query = "SELECT * FROM `urlist` WHERE `channel` = ? AND `url` = ? ORDER BY date LIMIT 1";
 
     my $query = "SELECT * FROM `urlist` WHERE `channel` = ? AND `url` = ? ORDER BY date LIMIT 1";
-    
+
     my $qh = $db->prepare($query);
-    
+
     $qh->bind_param(1, $channel);
     $qh->bind_param(2, $url);
 
     $qh->execute();
-    
+
     if(! ($row = $qh->fetchrow_hashref() ) ){
 	$db->disconnect();
 	return {};
@@ -463,19 +463,19 @@ sub check_for_repost{
 
     return $row;
 }
-    
+
 sub get_url_list{
     my(%options) = @_;
-    
+
     my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH, "","",{ RaiseError => 1, AutoCommit => 1});
-    
+
     my($qh, @record, @records);
 
     if(exists $options{'query'}){
 	$qh = $db->prepare($options{'query'});
 	$qh->execute();
     }
-    
+
     while(@record = $qh->fetchrow_array()){
 	push(@records, @record);
     }
@@ -493,9 +493,9 @@ sub url_count{
     $qr = $db->prepare($query);
 
     $qr->execute();
-    
+
     $result = $qr->fetchrow_array();
-    
+
     Irssi::print($result);
 
     $db->disconnect();
@@ -507,15 +507,15 @@ sub trigger_count{
     my($server, $msg, $nick, $address, $target) = @_;
 
     if ($msg =~ "!ucount") {
-        $server->command("MSG ".$target." "."There are currently ".url_count()." urls in the database.");
+	$server->command("MSG ".$target." "."There are currently ".url_count()." urls in the database.");
     }
 }
 
 sub assemble_statistics{
-    #statistics like who posts most frequently, 
+    #statistics like who posts most frequently,
     #what domains are most frequent
 }
-    
+
 Irssi::signal_add('message private',\&shorten );
 Irssi::signal_add('message public', \&trigger_title_msg);
 Irssi::signal_add('message irc action', \&trigger_title_me);
