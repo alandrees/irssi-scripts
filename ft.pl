@@ -6,11 +6,11 @@ use Irssi qw(command_bind signal_add);
 use Module::Refresh;
 $VERSION = '1.00';
 %IRSSI = (
-        authors         => 'Alan Drees' ,
-        contact         => 'alandrees@theselves.com',
-        name            => 'Random Futurama Quote',
-        description     => 'Outputs Random quote',
-        license         => 'GPLv3',
+    authors => 'Alan Drees' ,
+    contact => 'alandrees@theselves.com',
+    name    => 'Random Futurama Quote',
+    description     => 'Outputs Random quote',
+    license => 'GPLv3',
     );
 
 
@@ -68,7 +68,7 @@ sub quote{
 
 	    $response = trim($db[ int( rand( scalar(@db) - 1 ) ) ] );
 	}
-	   
+
     }else{
 	my @temp;
 	open(F_DB, $DATABASE);
@@ -90,7 +90,7 @@ sub quote{
 	    $response = "";
 	}
     }
-    
+
     if ( $response ne ""){
 	$server->command('MSG '.$target.' 6'.$response);
     }
