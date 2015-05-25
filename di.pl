@@ -6,27 +6,27 @@ use Irssi qw(command_bind signal_add);
 use Module::Refresh;
 $VERSION = '1.01';
 %IRSSI = (
-        authors         => 'Alan Drees',
-        contact         => 'alandrees@theselves.com',
-        name            => 'Dice',
-        description     => 'provides a dice-rolling mechanism',
-        license         => 'GPLv3',
+    authors         => 'Alan Drees',
+    contact         => 'alandrees@theselves.com',
+    name            => 'Dice',
+    description     => 'provides a dice-rolling mechanism',
+    license         => 'GPLv3',
     );
 
 
 sub _dice{
     my($server, $msg, $nick, $address, $target) = @_;
     my $delimiter;
-    
+
     if(index($msg,',') != -1){
 	$delimiter = ',';
     }
     else{
-        $delimiter = ' ';
+	$delimiter = ' ';
     }
 
-    my @arguments = split($delimiter, $msg); 
-    if($arguments[0] =~ /!dice/){ 
+    my @arguments = split($delimiter, $msg);
+    if($arguments[0] =~ /!dice/){
 	$server->command( 'MSG '.$target.' '.$nick.': '.$arguments[ int( rand( ( scalar( @arguments ) - 1 ) ) + 1)] );
     }
 }
