@@ -8,7 +8,6 @@ use HTTP::Headers;
 use LWP::UserAgent;
 use LWP::Simple;
 use HTML::HeadParser;
-use IO::Socket::INET;
 use DBI;
 use DBI qw(:sql_types);
 use Cwd;
