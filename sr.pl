@@ -8,11 +8,11 @@ use Irssi qw(command_bind signal_add);
 use Module::Refresh;
 $VERSION = '1.00';
 %IRSSI = (
-        authors         => 'Alan Drees',
-        contact         => 'alandrees@theselves.com',
-        name            => 'sizereport',
-        description     => 'Reports current storage system statistics (free/total)',
-        license         => 'GPLv3',
+    authors         => 'Alan Drees',
+    contact         => 'alandrees@theselves.com',
+    name            => 'sizereport',
+    description     => 'Reports current storage system statistics (free/total)',
+    license         => 'GPLv3',
     );
 
 #it will use the keys here to create a list of mount points to add to the sizereport
@@ -57,7 +57,7 @@ sub _sizereport{
 	    }
 	}else{
 	    my @temp_keys = keys(%script_config::sr_ALIASES);
-	    
+
 	    foreach(@temp_keys){
 
 		$path_list .= $_ . " ";
@@ -81,10 +81,10 @@ sub _sizereport{
 		$server->command('MSG '.$target.' '.$_);
 	    }
 	}
-	
+
     }
 }
-      	
+
 signal_add("message public", "_sizereport");
 
 #this refreshes the script_config.pm module, meaning you don't need reload
