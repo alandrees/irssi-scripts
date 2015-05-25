@@ -63,8 +63,8 @@ our $ul_ME_IGNORE_LIST = ();
 #url ignore list for incoming /msg commands
 our $ul_MSG_IGNORE_LIST = ();
 
-
-
+#Server API key for youtube data
+our $ul_YOUTUBE_API_KEY = "";
 
 ###ut.pl###
 
