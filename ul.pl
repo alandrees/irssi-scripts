@@ -225,10 +225,28 @@ sub title{
 sub vimeo_title{
     my($vid) = @_;
 
-    #this line matches to the
+    my $uri = "https://api.vimeo.com/videos/";
+
+    my $headers = HTTP::Headers->new("Accept" => "application/vnd.vimeo.*+json;version=3.2",
+				     "Authorization"  => "bearer ".$script_config::ul_VIMEO_AUTH_KEY);
+
+    #this line matches to the vimeo uri
     $vid =~ m/(?:https*:\/\/|www\.|https*:\/\/www\.)vimeo\.com\/([^\s&\?\.,!]+)/;
     $vid = $1;
 
+    $uri = $uri.$vid;
+
+    my $req = HTTP::Request->new('GET', $uri);
+
+    my $lwp = LWP::UserAgent->new;
+
+    $lwp->default_headers($headers);
+
+    my $response = $lwp->request($req);
+
+    my $js = decode_json $response->decoded_content;
+
+    my $title = $js->{name};
 
     return '11vimeo - 14'.$title.'';
 }
