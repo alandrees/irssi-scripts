@@ -6,11 +6,11 @@ use Irssi qw(command_bind signal_add);
 use Module::Refresh;
 $VERSION = '0.50';
 %IRSSI = (
-        authors         => 'Alan Drees',
-        contact         => 'alandrees@theselves.com',
-        name            => 'Net I/O',
-        description     => 'Output Current Network I/O',
-        license         => 'GPLv3',
+    authors => 'Alan Drees',
+    contact => 'alandrees@theselves.com',
+    name    => 'Net I/O',
+    description     => 'Output Current Network I/O',
+    license => 'GPLv3',
     );
 
 #this code looks like a mess to me... I want to refactor it.
@@ -20,7 +20,7 @@ sub _net{
     my($response, $silence_target);
 
     my @arguments = split(' ',$msg);
-    
+
     if(lc($arguments[0]) eq '!net'){
 	if(exists($arguments[1])){
 	    $response = readpipe("ifstat -i".$arguments[1]."-b 1 1 | grep [0-9]*\.[0-9][0-9] | sed 's/^[ \t]*/Rx: /' | sed 's/ [ \t]*/ Tx: /2'");
@@ -53,7 +53,7 @@ sub _net{
 
 	    $server->command('MSG '.$target.' '.$if_);
 	}
-    
+
 	$server->command('MSG '.$target.' '.$response);
     }
 }
