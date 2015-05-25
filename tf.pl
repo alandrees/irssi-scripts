@@ -6,18 +6,18 @@ use Encode qw(encode decode);
 use Module::Refresh;
 $VERSION = '1.00';
 %IRSSI = (
-        authors         => 'Alan Drees',
-        contact         => 'deepie@dm',
-        name            => 'table fixer',
-        description     => 'Fix the damn tables!',
-        license         => 'GPLv3',
-);
+    authors         => 'Alan Drees',
+    contact         => 'deepie@dm',
+    name            => 'table fixer',
+    description     => 'Fix the damn tables!',
+    license         => 'GPLv3',
+    );
 
 sub _tablefix{
-        my ($server, $msg, $nick, $address, $target) = @_;
+    my ($server, $msg, $nick, $address, $target) = @_;
 
-        if($msg=~ m/┻(━)*┻/x){
-	    
+    if($msg=~ m/┻(━)*┻/x){
+
 	    my $tabletop = "";
 	    {
 		use utf8;
@@ -25,7 +25,7 @@ sub _tablefix{
 	    }
 
 	    $server->command('msg '.$target.' ┬'. $tabletop . '┬ノ( º _ ºノ)');
-        }
+
 }
 
 signal_add("message public", "_tablefix");
