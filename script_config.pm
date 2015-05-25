@@ -67,7 +67,7 @@ our $ul_MSG_IGNORE_LIST = ();
 our $ul_YOUTUBE_API_KEY = "";
 
 #Personal Access Token for vimeo.com API
-our $script_config::ul_VIMEO_AUTH_KEY = "";
+our $ul_VIMEO_AUTH_KEY = "";
 
 ###ut.pl###
 
