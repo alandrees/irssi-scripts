@@ -230,23 +230,6 @@ sub vimeo_title{
     $vid =~ m/(?:https*:\/\/|www\.|https*:\/\/www\.)vimeo\.com\/([^\s&\?\.,!]+)/;
     $vid = $1;
 
-    my $sock = IO::Socket::INET->new(
-	PeerAddr=>'vimeo.com',
-	PeerPort=>'http(80)',
-	Proto=>'tcp',
-	    );
-    my $req="GET /api/v2/video/$vid.xml HTTP/1.0\r\n";
-    $req.="host: vimeo.com\r\n";
-    $req.="\r\n";
-    my $title;
-
-    print $sock $req;
-    while(<$sock>) {
-	if(/<title>(.*)<\/title>/) {
-	    close $sock;
-	    $title = $1;
-	}
-    }
 
     return '11vimeo - 14'.$title.'';
 }
