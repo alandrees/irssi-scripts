@@ -7,13 +7,13 @@ use Irssi qw(command_bind signal_add signal_stop);
 use Module::Refresh;
 $VERSION = '0.75';
 %IRSSI = (
-	authors		=> 'Alan Drees',
-	contact		=> 'alandrees@theselves.com',
-	name		=> 'multi-server identification',
-	description	=> 'identifies the user based on server, configurable
-                            for other service names.  Nick handler is for
-                            anope nickserv, to keep yourself authed at all
-                            times.  Still buggy.',
+    authors		=> 'Alan Drees',
+    contact		=> 'alandrees@theselves.com',
+    name		=> 'multi-server identification',
+    description	=> 'identifies the user based on server, configurable
+    for other service names.  Nick handler is for
+    anope nickserv, to keep yourself authed at all
+    times.  Still buggy.',
 	license		=> 'GPLv3',
 );
 
@@ -26,7 +26,7 @@ sub identificator{
     my ($data, $server) = @_;
     my $current_nick = lc($server->{nick});
     my $netname = lc($server->{tag});
-    
+
     $server->command('nick '.$script_config::id_authorizations{$netname}[0]);
     $server->command('msg '.$script_config::id_authorizations{$netname}[1].' IDENTIFY '.$script_config::id_authorizations{$netname}[2]);
 }
