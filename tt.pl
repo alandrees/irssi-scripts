@@ -6,57 +6,57 @@ use Irssi qw(command_bind signal_add);
 use Module::Refresh;
 $VERSION = '1.01';
 %IRSSI = (
-        authors         => 'Alan Drees',
-        contact         => 'alandrees@theselves.com',
-        name            => 'ascii art',
-        description     => 'Some ascii characters... to make IRC even more interesting!',
-        license         => 'GPLv2',
-);
+    authors         => 'Alan Drees',
+    contact         => 'alandrees@theselves.com',
+    name            => 'ascii art',
+    description     => 'Some ascii characters... to make IRC even more interesting!',
+    license         => 'GPLv2',
+    );
 
 sub _text_trigger{
-        my ($server, $msg, $nick, $address, $target) = @_;
-        my ($selfnick);
-        $selfnick = lc($server->{nick});
-       
-	#beer
-	if(lc($msg) =~ '!br'){
-	    $server->command('msg '.$target.' ヽ( ｡ヮﾟ)c[~]');
-	    return
-        }
+    my ($server, $msg, $nick, $address, $target) = @_;
+    my ($selfnick);
+    $selfnick = lc($server->{nick});
 
-	#table flip
-	if(lc($msg) =~ '!tf'){
-	    $server->command('msg '.$target.' (╯ `Д´)╯ ~┻━━━┻');
-	    return
-        }
+    #beer
+    if(lc($msg) =~ '!br'){
+	$server->command('msg '.$target.' ヽ( ｡ヮﾟ)c[~]');
+	return
+    }
 
-	#coffee
-	if(lc($msg) =~ '!cf'){
-	    $server->command('msg '.$target.' \( \'-\')c[~]');
-	    return
-        }
+    #table flip
+    if(lc($msg) =~ '!tf'){
+	$server->command('msg '.$target.' (╯ `Д´)╯ ~┻━━━┻');
+	return
+    }
 
-	#kyubi
-	if(lc($msg) =~ '!ky'){                                                                            
-	    $server->command('msg '.$target.' ／人◕ ‿‿ ◕人＼');
-	    return
-	}
+    #coffee
+    if(lc($msg) =~ '!cf'){
+	$server->command('msg '.$target.' \( \'-\')c[~]');
+	return
+    }
 
-	#look of disapproval
-	if(lc($msg) =~ '!lod'){
-            $server->command('msg '.$target.' ಠ_ಠ');
-	    return
-        }
+    #kyubi
+    if(lc($msg) =~ '!ky'){
+	$server->command('msg '.$target.' ／人◕ ‿‿ ◕人＼');
+	return
+    }
 
-	#????
-	if(lc($msg) =~ '!ki'){
-	    $server->command('msg '.$target.' ｷﾀ━━━━━━（゜∀゜）━━━━━━ッ!!');
-	    return
-	}
-	
-	#zoidberg
-	if(lc($msg) =~ '!zb'){
-	    $server->command('msg '.$target.' (V) (;,,;) (V)');
+    #look of disapproval
+    if(lc($msg) =~ '!lod'){
+	$server->command('msg '.$target.' ಠ_ಠ');
+	return
+    }
+
+    #????
+    if(lc($msg) =~ '!ki'){
+	$server->command('msg '.$target.' ｷﾀ━━━━━━（゜∀゜）━━━━━━ッ!!');
+	return
+    }
+
+    #zoidberg
+    if(lc($msg) =~ '!zb'){
+	$server->command('msg '.$target.' (V) (;,,;) (V)');
 	    return
 	}
 
@@ -69,7 +69,7 @@ sub _text_trigger{
 	if(lc($msg) =~ '!pt'){
 	    $server->command('msg '.$target.' ☜(ﾟヮﾟ☜)');
 	}
-	
+
 	#david caruso
 	if(lc($msg) =~ '!dc'){
 	    $server->command('msg '.$target.' (•_•)');
