@@ -22,13 +22,13 @@ sub self_defence{
 
 	#if($target =~ m/$sickle/){
 	    if(lc($msg) =~ m/$selfnick/){
-		
+
 		#accept a beer
 		if((lc($msg) =~ m/beer/)||(lc($msg) =~ m/cold one/)){
 		    if(lc($msg) =~ m/bottle/){
 			$server->command('action '.$target.' moves out of the way and watches '.$nick.' flail about!');
 			return;
-		    }		    
+		    }
 		    $server->command('action '.$target.' downs another beer!');
 		    return;
 		}
@@ -63,7 +63,7 @@ sub self_defence{
 		$server->command('action '.$target.' moves out of the way and watches '.$nick.' flail about!');
 	    }
 	#}
-	
+
 }
 
 signal_add('message irc action', 'self_defence');
