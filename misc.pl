@@ -16,7 +16,7 @@ $VERSION = '1.00';
 #quick and easy look of disapproval command.
 sub lod{
     my ($data, $server, $witem) = @_;
-    
+
     if($witem->{type} eq "CHANNEL" || $witem->{type} eq "QUERY"){
 	$server->command('msg '.$witem->{name}.' ಠ_ಠ');
     }else{
