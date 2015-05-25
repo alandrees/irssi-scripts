@@ -29,16 +29,16 @@ use threads;
 
 $VERSION = '1.00';
 %IRSSI = (
-        authors         => 'Alan Drees',
-        contact         => 'alandrees@theselves.com',
-        name            => 'URLs',
-        description     => 'URL lookup & shortening...',
-        license         => 'GPLv3',
-);
+    authors         => 'Alan Drees',
+    contact         => 'alandrees@theselves.com',
+    name            => 'URLs',
+    description     => 'URL lookup & shortening...',
+    license         => 'GPLv3',
+    );
 
 
-##NOTE: Careful with ~. If you su'd into a bot's account, use the full path, because ~ will be for the 
-#       account you originally logged in as (even if you did something like script /dev/null 
+##NOTE: Careful with ~. If you su'd into a bot's account, use the full path, because ~ will be for the
+#       account you originally logged in as (even if you did something like script /dev/null
 #       or the like).
 
 chdir $script_config::ul_DBPATH;
@@ -79,13 +79,13 @@ sub shorten{
 	    $server->command("MSG ".$target." ".$js->{id}.$info);
 	    log_url($data, $nick, lc($target));
 
-        }
-        else{
-            Irssi::print("Some error occured trying to goo.gl that url! :(");
-        }
+	}
+	else{
+	    Irssi::print("Some error occured trying to goo.gl that url! :(");
+	}
     }
     else{
-        Irssi::print("No url to shorten!");
+	Irssi::print("No url to shorten!");
     }
 }
 
@@ -105,7 +105,7 @@ sub trigger_title_msg{
 
 
 	    foreach $filter_url (@script_config::ul_MSG_IGNORE_LIST){
-                if( $url->host =~ m/$filter_url$/ ){
+		if( $url->host =~ m/$filter_url$/ ){
 		    return;
 		}
 	    }
@@ -135,7 +135,7 @@ sub trigger_title_me{
 
 
 	    foreach $filter_url (@script_config::ul_ME_IGNORE_LIST){
-                if( $url->host =~ m/$filter_url$/ ){
+		if( $url->host =~ m/$filter_url$/ ){
 		    return;
 		}
 	    }
@@ -222,7 +222,7 @@ sub title{
     return $title;
 }
 
-sub vimeo_title{                                                                                                                                                                        
+sub vimeo_title{
     my($vid) = @_;
 
     #this line matches to the
@@ -230,9 +230,9 @@ sub vimeo_title{
     $vid = $1;
 
     my $sock = IO::Socket::INET->new(
-                PeerAddr=>'vimeo.com',
-                PeerPort=>'http(80)',
-                Proto=>'tcp',
+	PeerAddr=>'vimeo.com',
+	PeerPort=>'http(80)',
+	Proto=>'tcp',
 	    );
     my $req="GET /api/v2/video/$vid.xml HTTP/1.0\r\n";
     $req.="host: vimeo.com\r\n";
@@ -241,10 +241,10 @@ sub vimeo_title{
 
     print $sock $req;
     while(<$sock>) {
-                if(/<title>(.*)<\/title>/) {
-                        close $sock;
-                        $title = $1;
-                }
+	if(/<title>(.*)<\/title>/) {
+	    close $sock;
+	    $title = $1;
+	}
     }
 
     return '11vimeo - 14'.$title.'';
@@ -279,7 +279,7 @@ sub build_repost_string{
     my $repost_data = check_for_repost($url, $channel);
 
     if(exists $repost_data->{'nick'}){
-    	return "4<<REPOST ALERT>>7 ".$repost_data->{'nick'}." 7@7 ".strftime("%e/%m/%Y %T", gmtime($repost_data->{'date'}))." 4<<REPOST ALERT>>";
+	return "4<<REPOST ALERT>>7 ".$repost_data->{'nick'}." 7@7 ".strftime("%e/%m/%Y %T", gmtime($repost_data->{'date'}))." 4<<REPOST ALERT>>";
     }else{
 	return "";
     }
