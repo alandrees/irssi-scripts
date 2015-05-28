@@ -26,6 +26,13 @@ sub _dice{
     }
 
     my @arguments = split($delimiter, $msg);
+
+    my $arglength = @arguments;
+
+    if(($arglength == 1) && ($arguments[0] =~ /!dice/)){
+	@arguments = ('!dice', 'Yes', 'No');
+    }
+
     if($arguments[0] =~ /!dice/){
 	$server->command( 'MSG '.$target.' '.$nick.': '.$arguments[ int( rand( ( scalar( @arguments ) - 1 ) ) + 1)] );
     }
