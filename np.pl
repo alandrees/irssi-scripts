@@ -266,6 +266,33 @@ sub get_data_vlc{
 
     my $xml_doc;
 
+    my $vlc_return_data = {};
+
+    my $return_value = {};
+
+    my @urls = ();
+
+    if($script_config::np_VLC_URL != ""){
+	push(@urls, $script_config::np_VLC_URL);
+    }
+    else
+    {
+	@urls = @script_config::np_VLC_URL_LIST;
+    }
+
+    foreach(@urls){
+	$vlc_return_data = vlc_call_http($_, @tags);
+
+	Irssi::print($vlc_return_data->{'fail'});
+
+	if(!exists($vlc_return_data->{'fail'})){
+	    $return_value = $vlc_return_data;
+	    last;
+	}
+    }
+
+    return $return_value;
+}
     my $return_value = {};
 
     my $req = HTTP::Request->new('GET',$script_config::np_VLC_URL);
