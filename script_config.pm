@@ -30,7 +30,14 @@ our $np_MPD_PORT   = "6600";
 #enables or disables the /npv and /nprv commands
 our $np_VLC = 1;
 
-#full path to the VLC xml file which will generate the XML data you want
+#list of paths to the VLC xml file which will generate the XML data you want
+#these urls are checked in order of the array, so keep that in mind when constructing
+#the array. $np_VLC_URL must be an empty string, or else it won't be checked
+
+our @np_VLC_URL_LIST = ("http://127.0.0.1:8080/requests/irssi.xml",
+			"http://192.168.0.1:8080/requests/irssi.xml");
+
+#full path to the VLC xml file which will generate the XML data you want (if you only want to check one system)
 our $np_VLC_URL = "http://127.0.0.1:8080/requests/irssi.xml";
 
 #password for accessing the VLC web interface
