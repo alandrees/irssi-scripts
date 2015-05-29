@@ -291,26 +291,43 @@ sub get_data_vlc{
 
     return $return_value;
 }
+
+#\fn vlc_call_http
+#
+# Makes the actual network/http call to VLC
+#
+# @parm $host string of the uri of the vlc resource
+#
+# @returns Hashref containing the tag => data pairs
+
+sub vlc_call_http{
+    my($uri, @tags) = @_;
+
     my $return_value = {};
 
-    my $req = HTTP::Request->new('GET',$script_config::np_VLC_URL);
+    my $req = HTTP::Request->new('GET', $uri);
 
-    $req->authorization_basic("",$script_config::np_VLC_PASS);
+
+    $req->authorization_basic("", $script_config::np_VLC_PASS);
 
     my $ua = LWP::UserAgent->new;
 
     my $response = $ua->request($req);
 
     if(!$response->is_error()){
+	Irssi::print($response->decoded_content);
 	my $xml_doc = XMLin($response->decoded_content);
 
 	foreach(@tags){
 	    $return_value->{$_} = $xml_doc->{$_};
 	}
     }
+    else
+    {
+	$return_value->{'fail'} = 1;
+    }
 
     return $return_value;
-
 }
 
 #local np: binds /np to display the title in the current window
