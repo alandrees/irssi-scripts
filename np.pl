@@ -315,7 +315,6 @@ sub vlc_call_http{
     my $response = $ua->request($req);
 
     if(!$response->is_error()){
-	Irssi::print($response->decoded_content);
 	my $xml_doc = XMLin($response->decoded_content);
 
 	foreach(@tags){
