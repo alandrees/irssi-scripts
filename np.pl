@@ -283,8 +283,6 @@ sub get_data_vlc{
     foreach(@urls){
 	$vlc_return_data = vlc_call_http($_, @tags);
 
-	Irssi::print($vlc_return_data->{'fail'});
-
 	if(!exists($vlc_return_data->{'fail'})){
 	    $return_value = $vlc_return_data;
 	    last;
