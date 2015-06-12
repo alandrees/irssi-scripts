@@ -21,7 +21,7 @@ sub _tablefix{
 	    my $tabletop = "";
 	    {
 		use utf8;
-		Irssi::print($msg = /━/);
+		#Irssi::print($msg = /━/);
 	    }
 
 	    $server->command('msg '.$target.' ┬'. $tabletop . '┬ノ( º _ ºノ)');
