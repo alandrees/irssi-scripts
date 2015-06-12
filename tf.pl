@@ -26,6 +26,7 @@ sub _tablefix{
 
 	    $server->command('msg '.$target.' ┬'. $tabletop . '┬ノ( º _ ºノ)');
 
+    }
 }
 
 signal_add("message public", "_tablefix");
