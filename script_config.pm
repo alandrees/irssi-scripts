@@ -64,6 +64,9 @@ our %sr_ALIASES = ( 'path-to-mountpoint' => ['array', 'of', 'aliases']);
 #path to the url database file
 our $ul_DBPATH = "~/.irssi";
 
+#enable the repost alert on the following netork=>channel's pairs
+our %ul_ENABLE_REPOST = ('netname' => ["#channel1", "#channel2", "#channel3"]);
+
 #url ignore list for incoming /me commands
 our $ul_ME_IGNORE_LIST = ();
 
