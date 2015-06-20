@@ -163,7 +163,9 @@ sub trigger_title{
 	$server->command("MSG ".$target." ".$response);
     }
 
-    if($response ne "" && $repost ne ""){
+    if($response ne "" &&
+       $repost ne "" &&
+       is_channel_repost_enabled(lc($server->{tag}), $target) == 1){
 	$server->command("MSG ".$target." ".$repost);
     }
 
