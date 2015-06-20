@@ -323,6 +323,25 @@ sub log_url{
 
 }
 
+sub is_channel_repost_enabled{
+    my($server, $channel) = @_;
+
+    my $is_enabled;
+
+    $is_enabled = 0;
+
+    if(exists $script_config::ul_ENABLE_REPOST{$server}){
+	foreach (@{$script_config::ul_ENABLE_REPOST{$server}}){
+	    if($channel eq $_){
+		$is_enabled = 1;
+		last;
+	    }
+	}
+    }
+
+    return $is_enabled;
+}
+
 sub setup_db{
     my($data, $server, $witem) = @_;
     my $db = DBI->connect( "dbi:SQLite:dbname=".$script_config::ul_DBPATH,"" ,"");
