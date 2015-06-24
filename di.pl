@@ -34,10 +34,10 @@ sub _dice{
 	my $arglength = @arguments;
 
 	if(($arglength == 1) && ($arguments[0] =~ /!dice/)){
-	    @arguments = ('!dice', 'Yes', 'No');
+	    @arguments = ('Yes', 'No');
 	}
 
-	$server->command( 'MSG '.$target.' '.$nick.': '.$arguments[ int( rand( ( scalar( @arguments ) - 1 ) ) + 1)] );
+	$server->command( 'MSG '.$target.' '.$nick.': '.$arguments[ int( rand( scalar( @arguments ) ) )] );
     }
 }
 
