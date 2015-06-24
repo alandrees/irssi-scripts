@@ -18,6 +18,9 @@ sub _dice{
     my($server, $msg, $nick, $address, $target) = @_;
     my $delimiter;
 
+    my $index;
+    my $choice;
+
     if($msg =~ /^!dice/){
 
 	if(index($msg,',') != -1){
