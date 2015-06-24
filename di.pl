@@ -44,6 +44,8 @@ sub _dice{
 
 	$choice = $arguments[$choice];
 
+	$choice =~ s/^\s+//;
+
 	$server->command( 'MSG '.$target.' '.$nick.': '.$choice );
     }
 }
