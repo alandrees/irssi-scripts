@@ -42,7 +42,7 @@ sub _dice{
 
 	$index = int( rand( scalar( @arguments ) ) );
 
-	$choice = $arguments[$choice];
+	$choice = $arguments[$index];
 
 	$choice =~ s/^\s+//;
 
