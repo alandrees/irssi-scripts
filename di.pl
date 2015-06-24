@@ -40,7 +40,11 @@ sub _dice{
 	    @arguments = ('Yes', 'No');
 	}
 
-	$server->command( 'MSG '.$target.' '.$nick.': '.$arguments[ int( rand( scalar( @arguments ) ) )] );
+	$index = int( rand( scalar( @arguments ) ) );
+
+	$choice = $arguments[$choice];
+
+	$server->command( 'MSG '.$target.' '.$nick.': '.$choice );
     }
 }
 
