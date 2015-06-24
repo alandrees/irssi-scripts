@@ -18,22 +18,23 @@ sub _dice{
     my($server, $msg, $nick, $address, $target) = @_;
     my $delimiter;
 
-    if(index($msg,',') != -1){
-	$delimiter = ',';
-    }
-    else{
-	$delimiter = ' ';
-    }
+    if($msg =~ /^!dice/){
 
-    my @arguments = split($delimiter, $msg);
+	if(index($msg,',') != -1){
+	    $delimiter = ',';
+	}
+	else{
+	    $delimiter = ' ';
+	}
 
-    my $arglength = @arguments;
+	my @arguments = split($delimiter, $msg);
 
-    if(($arglength == 1) && ($arguments[0] =~ /!dice/)){
-	@arguments = ('!dice', 'Yes', 'No');
-    }
+	my $arglength = @arguments;
 
-    if($arguments[0] =~ /!dice/){
+	if(($arglength == 1) && ($arguments[0] =~ /!dice/)){
+	    @arguments = ('!dice', 'Yes', 'No');
+	}
+
 	$server->command( 'MSG '.$target.' '.$nick.': '.$arguments[ int( rand( ( scalar( @arguments ) - 1 ) ) + 1)] );
     }
 }
