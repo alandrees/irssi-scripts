@@ -27,6 +27,8 @@ sub _dice{
 	    $delimiter = ' ';
 	}
 
+	$msg =~ s/^!dice//;
+
 	my @arguments = split($delimiter, $msg);
 
 	my $arglength = @arguments;
