@@ -185,6 +185,8 @@ sub title{
 
 	my $lwp = LWP::UserAgent->new;
 
+	$lwp->agent('Mozilla/4.0 (compatible; MSIE 6.0b; Windows NT 5.1; DigExt)');
+
 	my $mimetype = $lwp->head($url);
 
 	my @content_type = split(';',$mimetype->header('Content-Type'));
