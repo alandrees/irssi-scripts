@@ -76,6 +76,11 @@ sub _text_trigger{
 	$server->command('msg '.$target.'  ( •_•)>⌐■-■');
 	$server->command('msg '.$target.' (⌐■_■)');
     }
+
+    #lenny
+    if(lc($msg) =~ '!lenny'){
+	$server->command('msg '.$target.' ( ͡° ͜ʖ ͡°)');
+    }
 }
 
 signal_add("message public", "_text_trigger");
