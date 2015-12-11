@@ -57,25 +57,25 @@ sub _text_trigger{
     #zoidberg
     if(lc($msg) =~ '!zb'){
 	$server->command('msg '.$target.' (V) (;,,;) (V)');
-	    return
-	}
+	return
+    }
 
-	#crazy
-	if(lc($msg) =~ '!cz'){
-	    $server->command('msg '.$target.' ヽ( ｡ ヮﾟ)7');
-	}
+    #crazy
+    if(lc($msg) =~ '!cz'){
+	$server->command('msg '.$target.' ヽ( ｡ ヮﾟ)7');
+    }
 
-	#point
-	if(lc($msg) =~ '!pt'){
-	    $server->command('msg '.$target.' ☜(ﾟヮﾟ☜)');
-	}
+    #point
+    if(lc($msg) =~ '!pt'){
+	$server->command('msg '.$target.' ☜(ﾟヮﾟ☜)');
+    }
 
-	#david caruso
-	if(lc($msg) =~ '!dc'){
-	    $server->command('msg '.$target.' (•_•)');
-	    $server->command('msg '.$target.'  ( •_•)>⌐■-■');
-	    $server->command('msg '.$target.' (⌐■_■)');
-	}
+    #david caruso
+    if(lc($msg) =~ '!dc'){
+	$server->command('msg '.$target.' (•_•)');
+	$server->command('msg '.$target.'  ( •_•)>⌐■-■');
+	$server->command('msg '.$target.' (⌐■_■)');
+    }
 }
 
 signal_add("message public", "_text_trigger");
