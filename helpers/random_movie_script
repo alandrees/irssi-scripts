@@ -26,18 +26,21 @@ class RandomMovieChooser():
         Class constructor for the RandomMovieChooser class
         """
         self.path = ''
-
+        self.title = ''
         pass
 
     def run(self):
         """
         Run the program.
         """
-        self.path = self.pick_top_level_dir()
+        inital_path = self.pick_top_level_dir()
 
-        filename = self.pick_dir()
+        self.path = inital_path
+
+        while self.pick_dir() == False:
+            self.path = inital_path
         
-        output = (self.path, filename)
+        output = (self.path, self.title)
 
         print(json.dumps(output))
 
@@ -58,7 +61,6 @@ class RandomMovieChooser():
         """
         Choose between HD and SD directories
         """
-
         
         for i in range(0, 3):
             dirlist = [d for d in self._get_dirlist() if d not in FILTER_LIST]
@@ -71,8 +73,17 @@ class RandomMovieChooser():
             
             if len(dirlist) > 0:
                 self.path = self.path + '/' + dirlist[index]
-            
-        return dirlist[index]
+
+
+        if len(dirlist) > 0:
+            self.title = dirlist[index]
+        else:
+            self.title = "No movies found. Try again!"
+
+        if len(dirlist) > 0:
+            return True
+        else:
+            return False
 
     def _get_dirlist(self):
         return [name for name in os.listdir(self.path) if os.path.isdir(os.path.join(self.path, name))]
