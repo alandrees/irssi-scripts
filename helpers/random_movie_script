@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+
+"""
+Copyright 2016 Alan Drees
+
+This program will help me decide which movie to put on next while I work.
+
+This software is free.  Free to a good home and a wife and a children. And some food to feed them every night.
+"""
+
+
+import os
+import sys
+import random
+import json
+
+TOP_LEVEL_DIRS = ['/path/to/movies',
+                  '/path/to/other_movies']
+
+FILTER_LIST = ['lost+found']
+
+class RandomMovieChooser():       
+
+    def __init__(self):
+        """
+        Class constructor for the RandomMovieChooser class
+        """
+        self.path = ''
+
+        pass
+
+    def run(self):
+        """
+        Run the program.
+        """
+        self.path = self.pick_top_level_dir()
+
+        filename = self.pick_dir()
+        
+        output = (self.path, filename)
+
+        print(json.dumps(output))
+
+    def pick_top_level_dir(self):
+        """
+        Pick a top level directory from the list
+        """
+        
+        if len(TOP_LEVEL_DIRS) > 1:
+            index = random.randint(0, len(TOP_LEVEL_DIRS) - 1)
+        else:
+            index = 0
+
+        return TOP_LEVEL_DIRS[index]
+        
+
+    def pick_dir(self):
+        """
+        Choose between HD and SD directories
+        """
+
+        
+        for i in range(0, 3):
+            dirlist = [d for d in self._get_dirlist() if d not in FILTER_LIST]
+            
+
+            if len(dirlist) > 1:
+                index = random.randint(0, len(dirlist) - 1)
+            else:
+                index = 0
+            
+            if len(dirlist) > 0:
+                self.path = self.path + '/' + dirlist[index]
+            
+        return dirlist[index]
+
+    def _get_dirlist(self):
+        return [name for name in os.listdir(self.path) if os.path.isdir(os.path.join(self.path, name))]
+
+
+
+if __name__ == '__main__':
+    
+    app = RandomMovieChooser()
+    app.run()
