@@ -52,6 +52,13 @@ our $rt_SCRIPT_DIR = "~/scripts/";
 
 
 
+####mv.pl###
+
+#script directory containing the random_movie_script script
+our $mv_SCRIPT_DIR = "~/scripts/";
+
+
+
 ###sr.pl###
 
 #aliases for path
