@@ -30,6 +30,10 @@ our $np_MPD_PORT   = "6600";
 #enables or disables the /npv and /nprv commands
 our $np_VLC = 1;
 
+#define the networks with which to strip the color from the now playing return value
+our @np_strip_color = ('NetName1',
+		       'NetName2');
+
 #list of paths to the VLC xml file which will generate the XML data you want
 #these urls are checked in order of the array, so keep that in mind when constructing
 #the array. $np_VLC_URL must be an empty string, or else it won't be checked
