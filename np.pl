@@ -250,16 +250,35 @@ sub get_np_vlc{
 
     my $vlc_data = {};
 
+    my $use_color = 1;
+
     $vlc_data = get_data_vlc( @vlc_request );
 
     my $hours   = sprintf "%02d", $vlc_data->{"time"} / 3600;
     my $minutes = sprintf "%02.0f", ($vlc_data->{"time"} % 3600) / 60;
     my $seconds = sprintf "%02d", $vlc_data->{"time"} % 60;
 
-    if($vlc_data->{"title"} ne ''){
-	$return_value = "3watches 9".$vlc_data->{"title"}." 3[".$vlc_data->{"resolution"}."]"."1 @7 ".$hours.":".$minutes.":".$seconds;
+    foreach my $netname (@script_config::np_strip_color){
+	if(lc($server->{chatnet}) eq lc($netname)){
+	    $use_color = 0;
+	    last;
+	}
+    }
+
+
+    if($use_color == 0){
+
+	if($vlc_data->{"title"} ne ''){
+	    $return_value = "watches ".$vlc_data->{"title"}." [".$vlc_data->{"resolution"}."]"." @ ".$hours.":".$minutes.":".$seconds;
+	}else{
+	    $return_value = "watches nothing!";
+	}
     }else{
-	$return_value = "3watches 9nothing!";
+	if($vlc_data->{"title"} ne ''){
+	    $return_value = "3watches 9".$vlc_data->{"title"}." 3[".$vlc_data->{"resolution"}."]"."1 @7 ".$hours.":".$minutes.":".$seconds;
+	}else{
+	    $return_value = "3watches 9nothing!";
+	}
     }
 }
 
