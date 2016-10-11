@@ -240,7 +240,7 @@ sub local_npv{
 sub get_np_vlc{
     my ($data, $server, $channel) = @_;
 
-    my ($return_value);
+    my $return_value = "";
 
     my @vlc_request = ();
     push(@vlc_request, "title");
