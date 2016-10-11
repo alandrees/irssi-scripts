@@ -88,6 +88,16 @@ sub get_np_mpd{
 
     my %statusinfo = get_data_mpd('status');
 
+    my $a = $statusinfo{"time"};
+    $a =~ m/(\d+)/;
+
+    my $title = "";
+
+    my $minutes = sprintf "%.0f", $a / 60;
+    my $seconds = sprintf "%02d",$a % 60;
+
+    my $use_color = 1;
+
     if($statusinfo{"state"} == "play"){
 	#do play stuff
     }elsif($statusinfo{"state"} == "pause"){
@@ -96,11 +106,6 @@ sub get_np_mpd{
 	#do stop stuff
     }
 
-    my $a = $statusinfo{"time"};
-    $a =~ m/(\d+)/;
-
-    my $minutes = sprintf "%.0f", $a / 60;
-    my $seconds = sprintf "%02d",$a % 60;
 
     #style this however you like
     my $title = "3listens 7to9 ".$songinfo{"Artist"} . " - " . $songinfo{"Album"} . " - " . $songinfo{"Title"} . "1 @7 " . $minutes . ":" . $seconds;
