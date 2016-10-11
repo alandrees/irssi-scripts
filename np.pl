@@ -248,7 +248,6 @@ sub get_np_vlc{
     push(@vlc_request, "time");
     push(@vlc_request, "resolution");
 
-
     my $vlc_data = {};
 
     $vlc_data = get_data_vlc( @vlc_request );
