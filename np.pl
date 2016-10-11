@@ -159,10 +159,7 @@ sub get_data_mpd{
 
     my $version = $1;
 
-
     $socket->print( encode("utf-8", $command."\n") );
-
-
 
     while (defined (my $line = $socket->getline)){
 	chomp $line;
