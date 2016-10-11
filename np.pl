@@ -215,7 +215,8 @@ sub remote_npv{
 sub local_npv{
     my($data, $server, $channel) = @_;
 
-    my $title = get_np_vlc();
+    my $title = get_np_vlc($data, $server, $channel);
+
 
     if($title ne ""){
 	if(defined($channel)){
