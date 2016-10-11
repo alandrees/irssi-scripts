@@ -113,8 +113,11 @@ sub get_np_mpd{
 	}
     }
 
-    #style this however you like
-    my $title = "3listens 7to9 ".$songinfo{"Artist"} . " - " . $songinfo{"Album"} . " - " . $songinfo{"Title"} . "1 @7 " . $minutes . ":" . $seconds;
+    if($use_color == 0){
+	$title = "listens to ".$songinfo{"Artist"} . " - " . $songinfo{"Album"} . " - " . $songinfo{"Title"} . " @ " . $minutes . ":" . $seconds;
+    }else{
+	$title = "3listens 7to9 ".$songinfo{"Artist"} . " - " . $songinfo{"Album"} . " - " . $songinfo{"Title"} . "1 @7 " . $minutes . ":" . $seconds;
+    }
 
     if( (scalar keys %songinfo) != 0 ){
 	return $title;
