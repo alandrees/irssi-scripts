@@ -60,7 +60,7 @@ sub remote_np{
 sub local_np{
     my($data, $server, $channel) = @_;
 
-    my $title = get_np_mpd();
+    my $title = get_np_mpd($data, $server, $channel);
 
     if($title ne ""){
 	if(defined($channel)){
