@@ -106,6 +106,12 @@ sub get_np_mpd{
 	#do stop stuff
     }
 
+    foreach my $netname (@script_config::np_strip_color){
+	if(lc($server->{chatnet}) eq lc($netname)){
+	    $use_color = 0;
+	    last;
+	}
+    }
 
     #style this however you like
     my $title = "3listens 7to9 ".$songinfo{"Artist"} . " - " . $songinfo{"Album"} . " - " . $songinfo{"Title"} . "1 @7 " . $minutes . ":" . $seconds;
