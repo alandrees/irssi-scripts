@@ -17,6 +17,8 @@ sub _rus_trigger{
     my ($server, $msg, $nick, $address, $target) = @_;
     my ($selfnick);
 
+    my @arguments = split(' ',$msg);
+
     if(lc($arguments[0]) eq '!rus'){
     
 	my @russian_array = ('дурак',
