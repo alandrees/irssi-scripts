@@ -81,6 +81,11 @@ sub _text_trigger{
     if(lc($msg) =~ '!lenny'){
 	$server->command('msg '.$target.' ( ͡° ͜ʖ ͡°)');
     }
+
+    #shrug
+    if(lc($msg) =~ '!sh'){
+       $server->command('msg '.$target.' ¯\_(ツ)_/¯');
+    }
 }
 
 signal_add("message public", "_text_trigger");
