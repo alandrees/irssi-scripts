@@ -76,7 +76,7 @@ sub _rus_trigger{
     }
 }
 
-signal_add("message public", "_text_trigger");
+signal_add("message public", "_rus_trigger");
 
 #this refreshes the script_config.pm module, meaning you don't need reload
 #all of irssi just to test a new configuration variable
