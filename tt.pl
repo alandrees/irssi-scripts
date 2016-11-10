@@ -86,6 +86,11 @@ sub _text_trigger{
     if(lc($msg) =~ '!sh'){
        $server->command('msg '.$target.' ¯\_(ツ)_/¯');
     }
+
+    #yah
+    if(lc($msg) =~ '!ya'){
+	$server->command('msg '.$target.' ˉ\\oˉ\\');
+    }
 }
 
 signal_add("message public", "_text_trigger");
