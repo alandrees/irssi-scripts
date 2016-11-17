@@ -91,6 +91,10 @@ sub _text_trigger{
     if(lc($msg) =~ '!ya'){
 	$server->command('msg '.$target.' ˉ\\oˉ\\');
     }
+
+    if(lc($msg) =~ '!funk'){
+	$server->command('msg '.$target.' https://www.youtube.com/watch?v=RGUp3FMAXd8');
+    }
 }
 
 signal_add("message public", "_text_trigger");
