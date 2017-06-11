@@ -20,8 +20,10 @@ sub _resolve{
     my @arguments = split(' ', $msg);
 
     if(lc($arguments[0]) eq '!ip'){
+        $response = readpipe('dig "'.$arguments[1].'" ANY +short');
+    }
 
-	$response = readpipe('dig +short "'.$arguments[1].'" | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b"');
+
 	$server->command('MSG '.$target.' '.''.$arguments[1].":4 ".$response);
     }
 }
