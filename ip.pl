@@ -23,6 +23,9 @@ sub _resolve{
         $response = readpipe('dig "'.$arguments[1].'" ANY +short');
     }
 
+    if(lc($arguments[0]) eq '!dns'){
+        $response = readpipe('dig -x "'.$arguments[1].'" +short');
+    }
 
     if($response ne ""){
         $server->command('MSG '.$target.' '.'^B'.$arguments[1].":^B^C4 ".$response);
