@@ -28,7 +28,7 @@ sub _resolve{
     }
 
     if($response ne ""){
-        $server->command('MSG '.$target.' '.'^B'.$arguments[1].":^B^C4 ".$response);
+        $server->command('MSG '.$target.' '.''.$arguments[1].":4 ".$response);
     }
 }
 
